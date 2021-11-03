@@ -1,0 +1,10 @@
+extends layout
+block content
+    h2 Prihlásiť sa
+    form(method='POST', action='/login')
+        label E-mailová adresa
+            input.form-input(name='email', type='email' required)
+        label Heslo
+            input.form-input(name='heslo', type='password' required)
+        input.button.submit-button(type='submit' value='Login')
+        input.button.reset-button(type='reset' value='Zmazať')

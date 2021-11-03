@@ -3,3 +3,88 @@ body{
     margin: 0;
     padding: 0;
 }
+header{
+    background-color: #090c9b;
+    padding: 3px;
+}
+h1{
+    padding-left: 10px;
+    color: white;
+}
+p{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+h2{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 20px 0;
+}
+.buttons{
+    padding: 20vh 0;
+}
+#register{
+    display: block;
+    padding: 15px 30px;
+    margin-bottom: 5vh;
+    font-size: 1.4rem;
+    border-radius: .25rem;
+    background-color: #090c9b;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: bold;
+    border-color: #090c9b;
+
+}
+#login{
+    display: block;
+    padding: 15px 30px;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    border-radius: .25rem;
+    background-color: #b4c5e4;
+    color: #090c9b;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: bold;
+    border-color: #090c9b;
+}
+.button{
+    font-family: inherit;
+    display: inline-block;
+    font-size: 1rem;
+    border-radius: .25rem;
+    margin: 5px;
+    padding: .375rem .75rem;
+
+}
+.submit-button{
+    background-color: #090c9b;
+    color: #FBFFF1;
+    border-color: #090c9b;
+}
+.reset-button{
+    background-color: #757575;
+    color: #FFF;
+    border-color: #757575;
+}
+.form-input {
+    display: block;
+    padding: .375rem .75rem;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #495057;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+form{
+    margin: auto;
+    display: block ;
+    text-align: center;
+}
