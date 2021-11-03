@@ -1,7 +1,7 @@
 extends layout
 block content
     h2 Registrovať sa
-    form(method='POST', action='/login')
+    form.container(method='POST', action='/login')
         label Meno
             input.form-input(name='name', type='text' required)
         label E-mailová adresa

@@ -2,14 +2,22 @@ body{
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #006BA6;
 }
 header{
-    background-color: #090c9b;
-    padding: 3px;
+    background-color: white;
+    padding: 4px;
+    border-color: #00b0b9;
+    border-width: 0 0 5px 0;
+    border-style: solid;
 }
-h1{
+a{
+    font-size: 35px;
     padding-left: 10px;
-    color: white;
+    color: #006BA6;
+    margin: 5px;
+    text-decoration: none;
+    font-weight: bold;
 }
 p{
     margin-left: auto;
@@ -21,36 +29,39 @@ h2{
     margin-right: auto;
     text-align: center;
     padding: 20px 0;
+    color: #FFFFFF;
 }
 .buttons{
     padding: 20vh 0;
+    border-radius: .4rem;
+    min-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
 }
 #register{
     display: block;
     padding: 15px 30px;
-    margin-bottom: 5vh;
     font-size: 1.4rem;
     border-radius: .25rem;
-    background-color: #090c9b;
+    background-color: #00b0b9;
     color: white;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 15px auto;
+
     font-weight: bold;
-    border-color: #090c9b;
+    border-color: #00b0b9;
 
 }
 #login{
     display: block;
     padding: 15px 30px;
-    margin-bottom: 20px;
+    margin: 15px auto;
     font-size: 1.4rem;
     border-radius: .25rem;
-    background-color: #b4c5e4;
-    color: #090c9b;
-    margin-left: auto;
-    margin-right: auto;
+    background-color: #0496FF;
+    color: #ffffff;
+
     font-weight: bold;
-    border-color: #090c9b;
+    border-color: #0496FF;
 }
 .button{
     font-family: inherit;
@@ -62,9 +73,9 @@ h2{
 
 }
 .submit-button{
-    background-color: #090c9b;
+    background-color: #00b0b9;
     color: #FBFFF1;
-    border-color: #090c9b;
+    border-color: #00b0b9;
 }
 .reset-button{
     background-color: #757575;
@@ -73,7 +84,7 @@ h2{
 }
 .form-input {
     display: block;
-    padding: .375rem .75rem;
+    padding: .6rem .9rem;
     margin-bottom: 20px;
     font-size: 1rem;
     color: #495057;
@@ -82,9 +93,21 @@ h2{
     border-radius: .25rem;
     margin-left: auto;
     margin-right: auto;
+    font-weight: 400;
 }
 form{
     margin: auto;
     display: block ;
     text-align: center;
+    width: fit-content;
+}
+
+form.container{
+    background-color: #FFFFFF;
+    border-radius: .4rem;
+    padding: 25px;
+}
+
+label{
+    color: #006BA6;
 }
