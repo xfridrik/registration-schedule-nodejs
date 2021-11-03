@@ -7,6 +7,9 @@ let users = require('./routes/users');
 app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'pug');
 
+// add public folder
+app.use(express.static(__dirname + '/public'));
+
 app.use('/',users);
 
 // server start
