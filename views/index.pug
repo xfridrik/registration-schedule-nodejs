@@ -1,9 +1,11 @@
 extends layout
 block content
-    h2 Vitaj v registračnom systéme pre futbalové tímy!
-    div(class="buttons")
-        form(method="get" action="/register")
-            button(type="submit", id="register") Registrovať tím
-        p alebo
-        form(method="get" action="/login")
-            button(type="submit", id="login") Prihlásiť sa
+    h3 Vitaj v registračnom systéme pre futbalové tímy!
+    div(id="main-page")
+        img(src="/img/icon-256x256.png").icon
+        div(class="buttons")
+            form(method="get" action="/register")
+                button(type="submit", id="register") Registrovať tím
+            p alebo
+            form(method="get" action="/login")
+                button(type="submit", id="login") Prihlásiť sa

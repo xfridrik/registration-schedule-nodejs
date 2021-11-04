@@ -2,19 +2,20 @@ body{
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #006BA6;
+    background-color: #ccdcf8;
+    min-height: 100vh;
 }
 header{
-    background-color: white;
+    background-color: #2168e1;
     padding: 4px;
     border-color: #00b0b9;
-    border-width: 0 0 5px 0;
+    border-width: 0 0 0px 0;
     border-style: solid;
 }
 a{
     font-size: 35px;
     padding-left: 10px;
-    color: #006BA6;
+    color: white;
     margin: 5px;
     text-decoration: none;
     font-weight: bold;
@@ -28,11 +29,20 @@ h2{
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    padding: 20px 0;
-    color: #FFFFFF;
+    padding: 5px 0;
+    margin-top: 0;
+    color: #474747;
+}
+h3{
+    font-size: 23px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80%;
+    text-align: center;
+    padding: 5px 0;
+    color: #2168e1;
 }
 .buttons{
-    padding: 20vh 0;
     border-radius: .4rem;
     min-width: 250px;
     margin-left: auto;
@@ -43,12 +53,12 @@ h2{
     padding: 15px 30px;
     font-size: 1.4rem;
     border-radius: .25rem;
-    background-color: #00b0b9;
+    background-color: #2168e1;
     color: white;
     margin: 15px auto;
 
     font-weight: bold;
-    border-color: #00b0b9;
+    border-color: #2168e1;
 
 }
 #login{
@@ -57,11 +67,17 @@ h2{
     margin: 15px auto;
     font-size: 1.4rem;
     border-radius: .25rem;
-    background-color: #0496FF;
+    background-color: #474747;
     color: #ffffff;
 
     font-weight: bold;
-    border-color: #0496FF;
+    border-color: #474747;
+}
+#register:hover{
+    background-color: #3d7ce7;
+}
+#login:hover{
+    background-color: #5d5d5d;
 }
 .button{
     font-family: inherit;
@@ -73,9 +89,9 @@ h2{
 
 }
 .submit-button{
-    background-color: #00b0b9;
+    background-color: #3e7be5;
     color: #FBFFF1;
-    border-color: #00b0b9;
+    border-color: #3e7be5;
 }
 .reset-button{
     background-color: #757575;
@@ -96,10 +112,10 @@ h2{
     font-weight: 400;
 }
 form{
-    margin: auto;
     display: block ;
     text-align: center;
     width: fit-content;
+    margin: 20px auto auto;
 }
 
 form.container{
@@ -109,5 +125,30 @@ form.container{
 }
 
 label{
-    color: #006BA6;
+    color: #2168e1;
+}
+.icon{
+    display: block;
+    width: 200px;
+    height: 200px;
+    max-width: 70vw;
+    max-height: 70vw;
+    border-radius: .4rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+#main-page{
+    display: flex;
+    max-width: 800px;
+    align-items: center;
+    margin: 15vh auto auto;
+}
+@media only screen and (max-width: 520px) {
+    #main-page {
+        flex-direction: column;
+        margin-top: 15px;
+    }
+    .buttons{
+        margin-top: 50px;
+    }
 }
