@@ -20,29 +20,35 @@ router.post('/register', async(req,res) =>{
     const name= req.body.meno;
     const encryptedPass = await bcrypt.hash(pass, 10);
 
-    const users = await pool.query(
-        'SELECT * FROM users where email=$1',
-        [email]
-    )
-    if (users.rows.length === 0) {
-        // no email registered - allow registration
-        try {
-            pool.query(
-                'INSERT INTO users (name, email, password, team) VALUES ($1,$2,$3,$4);',
-                [name, email, encryptedPass, null]
-            )
-            req.flash("success", 'úspešne zaregistrovaný!');
-        } catch (e) {
-            req.flash("danger", "Registráciu sa nepodarilo vykonať")
-            console.log("insert err");
+    try {
+        const users = await pool.query(
+            'SELECT * FROM users where email=$1',
+            [email]
+        )
+        if (users.rows.length === 0) {
+            // no email registered - allow registration
+            try {
+                pool.query(
+                    'INSERT INTO users (name, email, password, team) VALUES ($1,$2,$3,$4);',
+                    [name, email, encryptedPass, null]
+                )
+                req.flash("success", 'úspešne zaregistrovaný!');
+            } catch (e) {
+                req.flash("danger", "Registráciu sa nepodarilo vykonať")
+                console.log(e);
+            }
+            res.render("login");
+        } else {
+            // email already registered
+            if (users.rows.length > 0) {
+                console.log("email obsadeny")
+                req.flash("danger", 'Email už je registrovaný!');
+            }
+            res.render("register");
         }
-        res.render("login");
-    } else {
-        // email already registered
-        if (users.rows.length > 0) {
-            console.log("email obsadeny")
-            req.flash("danger", 'Email už je registrovaný!');
-        }
+    }catch (e) {
+        console.log(e);
+        req.flash("danger", "Registráciu sa nepodarilo vykonať")
         res.render("register");
     }
 });
