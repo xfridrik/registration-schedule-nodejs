@@ -10,6 +10,9 @@ app.set('view engine', 'pug');
 // add public folder
 app.use(express.static(__dirname + '/public'));
 
+// parse data from web
+app.use(express.urlencoded({ extended: false }));
+
 app.use('/',users);
 
 // server start

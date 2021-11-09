@@ -1,9 +1,9 @@
 // database connect
 const conString = process.env.DATABASE_URL || "postgresql://postgres:root@localhost/teamreg";
 const{ Pool }=require("pg");
-const tables="CREATE TABLE IF NOT EXISTS users (id bigserial PRIMARY KEY NOT NULL, name VARCHAR(200) not NULL, email VARCHAR(200) not NULL, password VARCHAR(200) not NULL, team bigserial);" +
+const tables="CREATE TABLE IF NOT EXISTS users (id bigserial PRIMARY KEY NOT NULL, name VARCHAR(200) not NULL, email VARCHAR(200) not NULL, password VARCHAR(200) not NULL, team bigint);" +
     "CREATE TABLE IF NOT EXISTS admins (id bigserial PRIMARY KEY NOT NULL, name VARCHAR(200) not NULL, email VARCHAR(200) not NULL, password VARCHAR(200) not NULL);" +
-    "CREATE TABLE IF NOT EXISTS matches (id bigserial PRIMARY KEY NOT NULL, home bigserial, guest bigserial, round int not NULL, date date not NULL);" +
+    "CREATE TABLE IF NOT EXISTS matches (id bigserial PRIMARY KEY NOT NULL, home bigint, guest bigint, round int not NULL, date date not NULL);" +
     "CREATE TABLE IF NOT EXISTS settings (variable TEXT not NULL unique, checked BOOLEAN not NULL);" +
     "CREATE TABLE IF NOT EXISTS teams (id bigserial PRIMARY KEY NOT NULL, name VARCHAR(100) NOT NULL UNIQUE, pin INT NOT NULL, preferred_match int);"
 const settingNames = ["ALLOW_REGISTRATION", "ALLOW_TEAM_ADDING", "ALLOW_TEAM_EDITING", "ALLOW_PUBLIC_SCHEDULE"];
@@ -94,4 +94,5 @@ const settings = {
     }
 };
 
-return{pool,settings}
+module.exports = pool;
+//return{pool,settings}

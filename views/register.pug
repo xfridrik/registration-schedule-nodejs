@@ -1,9 +1,9 @@
 extends layout
 block content
-    form.container(method='POST', action='/login')
+    form.container(method='POST', action='/register')
         h2 Registrovať sa
         label
-            input.form-input(name='name', type='text', placeholder='Meno' required)
+            input.form-input(name='meno', type='text', placeholder='Meno' required)
         label
             input.form-input(name='email', type='email', placeholder='E-mailová adresa' required)
         label
