@@ -3,9 +3,9 @@ block content
 
     form.container(method='POST', action='/login')
         h2 Prihlásiť sa
-        label E-mailová adresa
-            input.form-input(name='email', type='email' required)
-        label Heslo
-            input.form-input(name='heslo', type='password' required)
+        label
+            input.form-input(name='email', type='email', placeholder='E-mailová adresa' required)
+        label
+            input.form-input(name='heslo', type='password', placeholder='Heslo' required)
         input.button.submit-button(type='submit' value='Login')
         input.button.reset-button(type='reset' value='Zmazať')

@@ -2,13 +2,13 @@ extends layout
 block content
     form.container(method='POST', action='/login')
         h2 Registrovať sa
-        label Meno
-            input.form-input(name='name', type='text' required)
-        label E-mailová adresa
-            input.form-input(name='email', type='email' required)
-        label Zopakuj E-mailovú adresu
-            input.form-input(name='email2', type='email' required)
-        label Heslo
-            input.form-input(name='heslo', type='password' required)
+        label
+            input.form-input(name='name', type='text', placeholder='Meno' required)
+        label
+            input.form-input(name='email', type='email', placeholder='E-mailová adresa' required)
+        label
+            input.form-input(name='email2', type='email', placeholder='Zopakuj e-mail' required)
+        label
+            input.form-input(name='heslo', type='password', placeholder='Heslo' required)
         input.button.submit-button(type='submit' value='Registrovať')
         input.button.reset-button(type='reset' value='Zmazať')
