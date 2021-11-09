@@ -13,6 +13,22 @@ app.use(express.static(__dirname + '/public'));
 // parse data from web
 app.use(express.urlencoded({ extended: false }));
 
+//Session middleware
+const session=require('express-session');
+app.use(session({
+    secret: 'red cat 123',
+    resave: false,
+    saveUninitialized: true,
+}));
+
+//messages middleware
+app.use(require('connect-flash')());
+app.use(function (req,res,next){
+    res.locals.messages = require('express-messages')(req,res);
+    next();
+});
+
+
 app.use('/',users);
 
 // server start

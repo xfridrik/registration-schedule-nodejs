@@ -31,19 +31,17 @@ router.post('/register', async(req,res) =>{
                 'INSERT INTO users (name, email, password, team) VALUES ($1,$2,$3,$4);',
                 [name, email, encryptedPass, null]
             )
-            console.log("zaregistrovany");
+            req.flash("success", 'úspešne zaregistrovaný!');
         } catch (e) {
-            //req.flash("danger", "Registráciu sa nepodarilo vykonať")
+            req.flash("danger", "Registráciu sa nepodarilo vykonať")
             console.log("insert err");
         }
-
-        //req.flash("success", 'úspešne zaregistrovaný!');
         res.render("login");
     } else {
         // email already registered
         if (users.rows.length > 0) {
             console.log("email obsadeny")
-            //req.flash("danger", 'Email už je registrovaný!');
+            req.flash("danger", 'Email už je registrovaný!');
         }
         res.render("register");
     }
