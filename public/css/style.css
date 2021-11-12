@@ -159,6 +159,28 @@ label{
     margin: 15vh auto auto;
 }
 
+.message{
+    padding: 12px 0;
+    text-align: center;
+    background-color: white;
+    border: 1px solid;
+    border-radius: 0.2rem;
+}
+.message-danger{
+    background-color: #ffd1d1;
+    color: #620000;
+    border-color: #ffa8a8;
+}
+.message-success{
+    background-color: #d8ffd1;
+    color: #2c6700;
+    border-color: #a8ff99;
+}
+.message-info{
+    background-color: #d1e6ff;
+    color: #004473;
+    border-color: #9dcbff;
+}
 @media only screen and (max-width: 520px) {
     #main-page {
         flex-direction: column;
