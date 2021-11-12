@@ -1,0 +1,36 @@
+extends layout
+block content
+    if team
+        form.container(method='POST', action="/update")
+            h2 Registrovaný tím:
+            label Názov tímu:
+                input.form-input(name='pred', value='' + name type='text' readonly)
+            label Nový názov tímu:
+                input.form-input(name='nazov', value='' + name type='text' required)
+            label preferovaný domáci zápas:
+                input.form-input(name='zapas', value='' + pref type='number')
+            input.button.submit-button(type='submit' value='Upraviť')
+            input.button.reset-button(type='reset' value='Resetovať')
+        form(method='POST', action="/remove", onsubmit="return validate(this);")
+            input.form-input(name='name', value='' + name type='hidden' required)
+            input.form-input(name='pin', type='hidden', value=pin)
+            input.button.remove-button(type='submit' value='ZMAZAŤ REGISTRÁCIU')
+
+    else
+        form.container(method='POST', action='/add')
+            h2 Zaregistrovať nový tím:
+            input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
+            input.form-input(name='zapas', type='number', placeholder="Preferovaný domáci zápas")
+
+            input.button.submit-button(type='submit' value='Odoslať')
+            input.button.reset-button(type='reset' value='Zmazať')
+
+    script.
+        const err = #{err};
+        if (err) {
+            alert("Tím s rovnakým názvom už existuje");
+        }
+    script.
+        function validate(form) {
+            return confirm('Naozaj chceš vymazať záznam?');
+        }

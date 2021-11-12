@@ -84,7 +84,82 @@ router.get("/logout",checkNotAuth, function (req, res){
 
 
 router.get('/user',checkNotAuth, function(req,res){
-    res.render('user');
+    res.render('user',{
+        name:req.user.name,
+    });
+});
+
+router.get('/team',checkNotAuth, function(req,res){
+    if(req.user.team){
+        pool.query("SELECT * FROM teams where id = $1",[req.user.team],(err,result)=>{
+            if(err){
+                req.flash("danger", 'Nepodarilo sa nájsť tím!');
+                res.redirect("/user");
+            }
+            else {
+                if(result.rows.length>0){
+                    res.render("team",{
+                        team:req.user.team,
+                        name:result.rows[0].name,
+                        pref:result.rows[0].preferred_match
+                    });
+                }
+                else{
+                    req.flash("danger", 'Nepodarilo sa nájsť tím!');
+                    res.redirect("/user");
+                }
+            }
+        });
+    }
+    else{
+        res.render('team',{
+            team:req.user.team,
+        });
+    }
+});
+
+router.post('/add', async(req,res) =>{
+    //kontrola zadania potrebných údajov na query
+    if(!req.body.nazov){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/add");
+    }
+    if(req.user.team){
+        req.flash("danger", "Operácia neúspešná! Užívateľ už má priradený tím!");
+        res.status(200).redirect("/add");
+    }
+    const name = req.body.nazov;
+    const preferred_match = req.body.zapas || 0;
+
+    const sql = "INSERT INTO teams (name, preferred_match) VALUES ($1,$2) RETURNING *;";
+    const sqlCheck = "SELECT * from teams where name = $1";
+    const todo = await pool.query(sqlCheck,[name]);
+    //DANY TIM UZ EXISTUJE
+    if (todo.rows.length > 0) {
+        req.flash("danger", 'Tím s rovnakým názvom už existuje!');
+        res.redirect("/team");
+    } else {
+        pool.query(
+            sql, [name, preferred_match],
+            (err, res) => {
+                console.log(err, res);
+                if(err){
+                    req.flash("danger", 'Nepodarilo sa registrovať tím!');
+                    res.redirect("/team");
+                }
+                else{
+                    pool.query("UPDATE users SET team=$1 where id = $2;",[res.rows[0].id,req.user.id],(err,res)=>{
+                        if(err){
+                            req.flash("danger", 'Nepodarilo sa priradiť tím!');
+                            res.redirect("/team");
+                        }
+                    });
+                }
+            });
+
+        req.flash("success", 'Tím bol pridaný!');
+        res.render("user");
+    }
 });
 
 //kontrola usera

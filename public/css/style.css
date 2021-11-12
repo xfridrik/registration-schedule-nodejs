@@ -102,6 +102,11 @@ h3{
     color: #FFF;
     border-color: #757575;
 }
+.remove-button{
+    background-color: #b50000;
+    color: #FFF;
+    border-color: #b50000;
+}
 
 input:focus,#register:focus,#login:focus{
     outline: 0;
@@ -133,7 +138,7 @@ form{
     margin: 20px auto auto;
 }
 
-form.container{
+.container{
     background-color: #FFFFFF;
     border-radius: .4rem;
     padding: 25px;
@@ -248,14 +253,14 @@ nav li:hover{
         flex-basis: 100%;
         display: flex;
         min-height: 25px;
-        margin: 5px;
+        margin: 2px 1px;
         justify-content: center;
         align-items: center;
 
         border-style: solid;
-        border-width: 2px;
-        border-color: white;
-        border-radius: 10px;
+        border-width: 0;
+        border-color: #333;
+        border-radius: 0;
         background-color: #4191ff;
     }
     nav li > a{
@@ -265,5 +270,11 @@ nav li:hover{
         padding: 5px;
         min-width: 0;
         font-weight: bold;
+    }
+    nav li:first-child{
+        margin-left: 0;
+    }
+    nav li:last-child{
+        margin-right: 0;
     }
 }

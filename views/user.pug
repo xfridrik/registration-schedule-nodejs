@@ -1,4 +1,10 @@
 extends layout
 block content
 
-    p hello kitty logged in
+    h2 Vitaj #{name}!
+    h3 Novinky:
+    if news
+        each n, i in news
+            p #{n}
+    else
+        p Nie sú k dispozícii žiadne novinky
