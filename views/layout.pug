@@ -8,6 +8,15 @@ html(lang="sk")
         link(rel='manifest' href='./manifest.json')
     body
         header
-            a(href="/") Team Registration
+            a.title(href="/") Team Registration
+            if user
+                nav
+                    ul.nav
+                        li.nav-item
+                            a.nav-link.nav-admin(href='/team') Môj tím
+                        li.nav-item
+                            a.nav-link.nav-admin(href='/rozpis') Rozpis zápasov
+                        li.nav-item
+                            a.nav-link.nav-admin(href='/logout') Odhlásiť sa
         !=messages('message',locals)
         block content

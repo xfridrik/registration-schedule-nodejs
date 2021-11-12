@@ -11,8 +11,10 @@ header{
     border-color: #00b0b9;
     border-width: 0 0 0px 0;
     border-style: solid;
+    display: flex;
+    align-items: center;
 }
-a{
+a.title{
     font-size: 35px;
     padding-left: 10px;
     color: white;
@@ -181,6 +183,42 @@ label{
     color: #004473;
     border-color: #9dcbff;
 }
+
+nav{
+    text-align: center;
+    padding: 10px;
+    margin-left: auto;
+}
+nav ul{
+    margin: 0;
+    padding: 0;
+}
+nav li{
+    display: inline-block;
+    padding: 0;
+    margin: 5px;
+
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
+    border-radius: 10px;
+    background-color: #4191ff;
+}
+nav li > a{
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px;
+    min-width: 80px;
+}
+nav li > a.active{
+    font-weight: bold;
+    color: #004a99;
+}
+nav li:hover{
+    background-color: #007bff;
+}
+
 @media only screen and (max-width: 520px) {
     #main-page {
         flex-direction: column;
@@ -188,5 +226,44 @@ label{
     }
     .buttons{
         margin-top: 50px;
+    }
+    nav {
+        overflow: hidden;
+        background-color: #333;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 0;
+
+    }
+    ul.nav{
+        display: flex;
+        flex-direction: row;
+        align-content: space-between;
+        justify-content: center;
+        min-height: 60px;
+    }
+    nav li{
+        flex-basis: 100%;
+        display: flex;
+        min-height: 25px;
+        margin: 5px;
+        justify-content: center;
+        align-items: center;
+
+        border-style: solid;
+        border-width: 2px;
+        border-color: white;
+        border-radius: 10px;
+        background-color: #4191ff;
+    }
+    nav li > a{
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        padding: 5px;
+        min-width: 0;
+        font-weight: bold;
     }
 }

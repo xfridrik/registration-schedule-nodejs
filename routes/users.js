@@ -10,13 +10,19 @@ initPassport(passport);
 router.use(passport.initialize());
 router.use(passport.session());
 
-router.get('/',function(req,res){
+//logged in variable
+router.get('*',function (req,res,next){
+    res.locals.user = req.user || null;
+    next();
+})
+
+router.get('/',checkAuth,function(req,res){
     res.render('index');
 });
-router.get('/login',function(req,res){
+router.get('/login',checkAuth,function(req,res){
     res.render('login');
 });
-router.get('/register',function(req,res){
+router.get('/register',checkAuth,function(req,res){
     res.render('register');
 });
 
@@ -61,7 +67,7 @@ router.post('/register', async(req,res) =>{
 
 
 //Prihlásenie
-router.post("/login",
+router.post("/login",checkAuth,
     passport.authenticate("local", {
         successRedirect: "/user",
         failureRedirect: "/login",
@@ -70,7 +76,7 @@ router.post("/login",
 );
 
 //odhlásenie
-router.get("/logout", (req, res) => {
+router.get("/logout",checkNotAuth, function (req, res){
     req.logout();
     req.flash("success",'úspešne odhlásený!');
     res.redirect("/login");
