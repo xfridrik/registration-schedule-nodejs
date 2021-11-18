@@ -1,0 +1,20 @@
+extends layout
+block content
+
+    h3 Rozpis zápasov:
+    if rounds
+        u1.list-group.teams
+            each round, i in rounds
+                dta.list-group-item.kolo.active= i + 1 + ". kolo"
+                dda.list-group-item.kolo
+                    nav
+                        each match, j in round
+                            dt.list-group-item.zapas=match.date.toDateString()
+                            //if(match.hometeam===match.guestteam)
+                                dd.list-group-item.zapas=match.hometeam + " - VOĽNO"
+                            //else
+                                dd.list-group-item.zapas=match.hometeam + " - " + match.guestteam
+                            dd.list-group-item.zapas=match.hometeam + " - " + match.guestteam
+    else
+        p Rozpis zápasov zatiaľ nebol zverejnený.
+
