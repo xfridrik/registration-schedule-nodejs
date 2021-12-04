@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool= require('../config/db');
 const bcrypt = require("bcrypt");
-const passport = require("passport");
+const passport = require('passport');
 
 // passport inicializácie
 const initPassport = require("../config/passportUsers");
@@ -41,8 +41,8 @@ router.post('/register', async(req,res) =>{
             // no email registered - allow registration
             try {
                 pool.query(
-                    'INSERT INTO users (name, email, password, team) VALUES ($1,$2,$3,$4);',
-                    [name, email, encryptedPass, null]
+                    'INSERT INTO users (name, email, password, team, privileges) VALUES ($1,$2,$3,$4,$5);',
+                    [name, email, encryptedPass, null, "user"]
                 )
                 req.flash("success", 'úspešne zaregistrovaný!');
             } catch (e) {
@@ -143,6 +143,7 @@ router.post('/add', async(req,res) =>{
             req.flash("danger", 'Tím s rovnakým názvom už existuje!');
             res.redirect("/team");
         } else {
+            //pridá tím do db
             pool.query(
                 sql, [name, preferred_match],
                 (err, res) => {
@@ -151,6 +152,7 @@ router.post('/add', async(req,res) =>{
                         req.flash("danger", 'Nepodarilo sa registrovať tím!');
                         res.redirect("/team");
                     }
+                    //pridá tím užívateľovi
                     else{
                         pool.query("UPDATE users SET team=$1 where id = $2;",[res.rows[0].id,req.user.id],(err,res)=>{
                             if(err){
@@ -167,6 +169,39 @@ router.post('/add', async(req,res) =>{
     }
 });
 
+//Požiadavka na zmenu údajov
+router.post('/update', checkNotAuth, async (req,res)=>{
+    if(!(req.body.nazov)){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.redirect("/team");
+    }
+    const name = req.body.nazov;
+    const preferred_match = req.body.zapas||0;
+    //Ak nastala zmena názvu, skontroluje, či už taký tím neexistuje
+    if(name!==req.body.pred){
+        const sqlCheck="SELECT * from teams where name = $1";
+        const todo=await pool.query(sqlCheck,[name]);
+        if(todo.rows.length>0){
+            req.flash("danger",'Tím s rovnakým názvom už existuje!');
+            res.redirect("/team")
+            return;
+        }
+    }
+    const sql = "UPDATE teams SET name=$1, preferred_match=$2 where id = $3";
+    pool.query(
+        sql,[name,preferred_match,req.user.team],
+        (err, res) => {
+            console.log(err, res);
+            if(err){
+                req.flash("danger",'Nastala chyba!');
+                res.redirect("/");
+            }
+        });
+    req.flash("success",'Údaje boli úspešne zmenené!');
+    res.redirect("/team");
+});
+
+
 //kontrola usera
 function checkAuth(req,res,next){
     if(req.isAuthenticated()){
@@ -179,8 +214,8 @@ function checkNotAuth(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    req.flash("danger","Prístup zamietnutý, prosím prihlás sa!")
-    res.redirect(303,"/login");
+    req.flash("danger","Prístup bol zamietnutý!")
+    res.redirect(303,"/");
 }
 
 

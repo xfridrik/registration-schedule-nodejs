@@ -1,15 +1,15 @@
 doctype html
 html(lang="sk")
     head
-        title Teams Registration
+        title Teams Registration - admin
         meta(name='viewport' content='width=device-width, initial-scale=1.0')
         link(rel='stylesheet', href='/css/style.css')
         script(src="/js/script.js")
         link(rel='manifest' href='./manifest.json')
     body
         header
-            a.title(href="/") Team Registration
-            if user
+            a.title(href="/") Team Registration - admin
+            if admin
                 nav
                     ul.nav
                         li.nav-item
@@ -17,18 +17,17 @@ html(lang="sk")
                                 img.menu-icon(src="/img/home.svg")
                                 p.menu Domov
                         li.nav-item
-                            a.nav-link.nav-admin(href='/team')
+                            a.nav-link.nav-admin(href='/teams')
                                 img.menu-icon(src="/img/team.svg")
                                 p.menu Môj tím
                         li.nav-item
                             a.nav-link.nav-admin(href='/schedule')
                                 img.menu-icon(src="/img/schedule.svg")
                                 p.menu Rozpis
-                        if user.privileges === "admin"
-                            li.nav-item
-                                a.nav-link.nav-admin(href='/settings')
-                                    img.menu-icon(src="/img/settings.svg")
-                                    p.menu Nastavenia
+                        li.nav-item
+                            a.nav-link.nav-admin(href='/logout')
+                                img.menu-icon(src="/img/settings.svg")
+                                p.menu Nastavenia
                         li.nav-item
                             a.nav-link.nav-admin(href='/logout')
                                 img.menu-icon(src="/img/logout.svg")

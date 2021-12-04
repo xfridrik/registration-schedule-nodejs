@@ -1,0 +1,11 @@
+extends layout
+block content
+
+    form.container(method='POST', action='/admin/login')
+        h2 Prihlásiť sa
+        label
+            input.form-input(name='email', type='email', placeholder='E-mailová adresa' required)
+        label
+            input.form-input(name='heslo', type='password', placeholder='Heslo' required)
+        input.button.submit-button(type='submit' value='Login')
+        input.button.reset-button(type='reset' value='Zmazať')

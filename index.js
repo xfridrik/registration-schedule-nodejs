@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 let users = require('./routes/users');
+let admin = require('./routes/admin');
 
 // set view engine - pug
 app.set('views', path.join(__dirname,'views'));
@@ -14,12 +15,14 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
 
 //Session middleware
+
 const session=require('express-session');
 app.use(session({
     secret: 'red cat 123',
     resave: false,
     saveUninitialized: true,
 }));
+
 
 //messages middleware
 app.use(require('connect-flash')());
@@ -30,6 +33,7 @@ app.use(function (req,res,next){
 
 
 app.use('/',users);
+app.use('/admin',admin);
 
 // server start
 app.listen(process.env.PORT||3000,function(){
