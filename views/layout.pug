@@ -8,8 +8,11 @@ html(lang="sk")
         link(rel='manifest' href='./manifest.json')
     body
         header
-            a.title(href="/") Team Registration
             if user
+                if user.privileges === "admin"
+                    a.title(href="/") TR - Admin
+                else
+                    a.title(href="/") Team Registration
                 nav
                     ul.nav
                         li.nav-item
@@ -33,5 +36,7 @@ html(lang="sk")
                             a.nav-link.nav-admin(href='/logout')
                                 img.menu-icon(src="/img/logout.svg")
                                 p.menu Odhlásiť sa
+            else
+                a.title(href="/") Team Registration
         !=messages('message',locals)
         block content

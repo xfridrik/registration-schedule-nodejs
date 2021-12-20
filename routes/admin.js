@@ -16,31 +16,14 @@ router.get('*',function (req,res,next){
     next();
 })
 
-router.get('/',function(req,res){
-    pool.query('SELECT * FROM users where privileges=$1',["admin"],
-        (err,result)=>{
-            if(err){
-                throw err;
-            }
-            else {
-                if(result.rows.length===0){
-                    console.log("here")
-                    res.redirect("admin/register")
-                }
-                else{
-                    res.redirect("/login")
-                }
-            }
-        })
-});
 
-router.get('/register',checkAdminExists, function(req,res){
+router.get("/admin/register", checkAdminExists, function (req, res){
     res.render('admin/register');
 });
 
 
 //žiadosť o registráciu
-router.post('/register', checkAdminExists, async(req,res) =>{
+router.post('/admin/register', checkAdminExists, async(req,res) =>{
     const email = req.body.email;
     const pass = req.body.heslo;
     const name= req.body.meno;
@@ -78,21 +61,10 @@ router.post('/register', checkAdminExists, async(req,res) =>{
     }
 });
 
-//Prihlásenie
-router.post("/login",checkAuth,
-    passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/login",
-        failureFlash: true
-    })
-);
-
-//odhlásenie
-router.get("/logout",checkNotAuthAdmin, function (req, res){
-    req.logout();
-    req.flash("success",'úspešne odhlásený!');
-    res.redirect("/login");
+router.get("/settings", checkNotAuthAdmin, function (req, res){
+    res.render('admin/settings');
 });
+
 
 //kontrola usera
 function checkAuth(req,res,next){
@@ -109,7 +81,7 @@ function checkNotAuthAdmin(req, res, next) {
         }
     }
     req.flash("danger","Prístup zamietnutý, nedostatočné oprávnenie!")
-    res.redirect(303,"/admin");
+    res.redirect(303,"/");
 }
 
 function checkAdminExists(req, res, next) {

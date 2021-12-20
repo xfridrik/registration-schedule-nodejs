@@ -31,9 +31,8 @@ app.use(function (req,res,next){
     next();
 });
 
-
 app.use('/',users);
-app.use('/admin',admin);
+app.use('/',admin);
 
 // server start
 app.listen(process.env.PORT||3000,function(){
