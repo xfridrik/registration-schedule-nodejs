@@ -2,9 +2,16 @@ extends layout
 block content
 
     h2 Vitaj #{name}!
-    h3 Novinky:
-    if news
-        each n, i in news
-            p #{n}
+    h3 Aktuálne súťaže:
+    if leagues
+        dl.list-group.teams
+            each league, i in leagues
+                dt.list-group-item=league.name
+                dd.list-group-item="Začiatok prvej časti: " + league.start_date_first.toDateString()
+                dd.list-group-item="Začiatok druhej časti: " + league.start_date_second.toDateString()
+                if(league.opened)
+                    dd.list-group-item.open="Prihlasovanie otvorené"
+                else
+                    dd.list-group-item.closed="Prihlasovanie ukončené"
     else
-        p Nie sú k dispozícii žiadne novinky
+        p Nie sú k dispozícii žiadne súťaže

@@ -61,10 +61,48 @@ router.post('/admin/register', checkAdminExists, async(req,res) =>{
     }
 });
 
-router.get("/settings", checkNotAuthAdmin, function (req, res){
-    res.render('admin/settings');
+router.get("/settings", checkNotAuthAdmin, async function(req, res) {
+    res.render("admin/settings")
+})
+
+router.get("/addleague", checkNotAuthAdmin, async function (req, res){
+    try{
+        const leagues = await pool.query('SELECT * FROM leagues');
+        res.render('admin/addleague', {
+            leagues: leagues.rows
+        });
+    }catch (e) {
+        console.log(e);
+        req.flash("danger", 'Chyba pri hľadaní súťaží');
+        res.redirect("/user");
+    }
 });
 
+//Požiadavka na zmenu údajov
+router.post('/addleague', checkNotAuthAdmin, async (req,res)=>{
+    console.log(req.body.leagueopen);
+    if(!req.body.startdatefirst || !req.body.startdatesecond || !req.body.nteams ){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/settings");
+    }
+    let open = false;
+    if(req.body.leagueopen){
+        open = true;
+    }
+    const sql="INSERT INTO leagues (name, start_date_first, start_date_second, nteams, opened) VALUES ($1,$2,$3,$4,$5);";
+    pool.query(
+        sql,[req.body.leaguename,req.body.startdatefirst, req.body.startdatesecond, req.body.nteams, open],
+        (err) => {
+            console.log(err);
+            if(err){
+                req.flash("danger",'Nastala chyba!');
+                res.redirect("/");
+            }
+        });
+    req.flash("success",'Súťaž bola pridaná!');
+    res.redirect("/settings");
+
+});
 
 //kontrola usera
 function checkAuth(req,res,next){

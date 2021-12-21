@@ -1,0 +1,19 @@
+extends ../layout
+block content
+
+    form.container(method='POST', action='/addleague')
+        h2 Pridať novú súťaž:
+        label Dátum začiatku prvej časti:
+            input.form-input(name='startdatefirst', type='date' required)
+        label Dátum začiatku druhej časti:
+            input.form-input(name='startdatesecond', type='date' required)
+        label Počet tímov:
+            input.form-input(name='nteams', type='number' required)
+        label Názov súťaže:
+            input.form-input(name='leaguename', type='text' required)
+        .switch-field
+            input#SwitchOpen.switch(type='checkbox', name="leagueopen", value="open")
+            label(for='SwitchOpen') Otvorené prihlasovanie
+
+        input.button.submit-button(type='submit' value='Vytvoriť')
+        input.button.reset-button(type='reset' value='Zmazať')

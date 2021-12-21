@@ -3,33 +3,137 @@ block content
     if team
         form.container(method='POST', action="/update")
             h2 Registrovaný tím:
-            label Názov tímu:
-                input.form-input(name='pred', value='' + name type='text' readonly)
+            label Pôvodný názov tímu:
+                input.form-input(name='pred', value='' + team.name type='text' readonly)
             label Nový názov tímu:
-                input.form-input(name='nazov', value='' + name type='text' required)
+                input.form-input(name='nazov', value='' + team.name type='text' required)
+
             label preferovaný domáci zápas:
-                input.form-input(name='zapas', value='' + pref type='number')
+                select.form-input(id='pref-match-edit', name='prefmatch', required)
+
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Resetovať')
-        form(method='POST', action="/remove", onsubmit="return validate(this);")
-            input.form-input(name='name', value='' + name type='hidden' required)
-            input.form-input(name='pin', type='hidden', value=pin)
+        form(method='POST', action="/remove-team", onsubmit="return validate(this);")
             input.button.remove-button(type='submit' value='ZMAZAŤ REGISTRÁCIU')
 
     else
-        form.container(method='POST', action='/add')
-            h2 Zaregistrovať nový tím:
-            input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
-            input.form-input(name='zapas', type='number', placeholder="Preferovaný domáci zápas")
+        if leagues
+            form.container(method='POST', action='/add')
+                h2 Zaregistrovať nový tím:
+                input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
 
-            input.button.submit-button(type='submit' value='Odoslať')
-            input.button.reset-button(type='reset' value='Zmazať')
+                label(for='league') Súťaž
+                select.form-input(id='league', name='league' required)
+                    each league, i in leagues
+                        if league.opened
+                            option(value=league.id) #{league.name}
+
+                label(for='pref-match') Preferovaný domáci zápas
+                select.form-input(id='pref-match', name='prefmatch', required)
+
+                input.button.submit-button(type='submit' value='Odoslať')
+                input.button.reset-button(type='reset' value='Zmazať')
+        else
+            h2 Nie je otvorená žiadna súťaž pre prihlásenie tímu
 
     script.
-        const err = #{err};
-        if (err) {
-            alert("Tím s rovnakým názvom už existuje");
+        const league = document.getElementById("league");
+        const pref = document.getElementById("pref-match");
+        const leagues = !{JSON.stringify(leagues)};
+        if(league){
+            league.addEventListener("change", () => {
+                updatePref();
+            })
+
+            function updatePref() {
+                pref.innerHTML = "";
+                for (let l in leagues) {
+                    if (leagues.hasOwnProperty(l)) {
+                        if (leagues[l].id === league.value) {
+                            let laps = 0;
+                            if (leagues[l].nteams % 2) {
+                                laps = leagues[l].nteams - 1;
+                            } else {
+                                laps = leagues[l].nteams;
+                            }
+                            let date = new Date(leagues[l].start_date_first);
+                            for (let i = 0; i < laps; i++) {
+                                var opt = document.createElement("option");
+                                opt.setAttribute("value", i.toString());
+                                if (i === 0) {
+                                    opt.innerText = "Nedefinovaný";
+                                } else {
+                                    opt.innerText = date.toDateString()
+                                    date.setDate(date.getDate() + 7);
+                                }
+                                pref.append(opt)
+                            }
+                            date = new Date(leagues[l].start_date_second);
+                            for (let i = laps; i < 2 * laps - 1; i++) {
+                                var opt = document.createElement("option");
+                                opt.setAttribute("value", i.toString());
+                                opt.innerText = date.toDateString()
+                                date.setDate(date.getDate() + 7);
+                                pref.append(opt)
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            updatePref();
         }
+
+    script.
+        const prefEdit = document.getElementById("pref-match-edit");
+        const team = !{JSON.stringify(team)};
+        let nteams;
+        let date;
+        let dateSecond;
+
+        for (let l in leagues) {
+            if (leagues.hasOwnProperty(l)) {
+                if (leagues[l].id === team.league) {
+                    nteams = leagues[l].nteams;
+                    date = new Date(leagues[l].start_date_first);
+                    dateSecond = new Date(leagues[l].start_date_second);
+                }
+            }
+        }
+
+        let laps = 0;
+        if (nteams % 2) {
+            laps = nteams - 1;
+        } else {
+            laps = nteams;
+        }
+        for (let i = 0; i < laps; i++) {
+            var opt = document.createElement("option");
+            opt.setAttribute("value", i.toString());
+            if (team.preferred_match === i) {
+                opt.setAttribute("selected", "selected");
+            }
+            if (i === 0) {
+                opt.innerText = "Nedefinovaný";
+            } else {
+                opt.innerText = date.toDateString()
+                date.setDate(date.getDate() + 7);
+            }
+            prefEdit.append(opt)
+        }
+        for (let i = laps; i < 2 * laps - 1; i++) {
+            var opt = document.createElement("option");
+            opt.setAttribute("value", i.toString());
+            opt.innerText = dateSecond.toDateString()
+            if(team.preferred_match === i){
+                opt.setAttribute("selected", "selected");
+            }
+            dateSecond.setDate(dateSecond.getDate() + 7);
+            prefEdit.append(opt)
+        }
+        document.getElementById("pref-match-edit");
+
     script.
         function validate(form) {
             return confirm('Naozaj chceš vymazať záznam?');
