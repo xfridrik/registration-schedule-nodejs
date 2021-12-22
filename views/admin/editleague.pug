@@ -1,0 +1,25 @@
+extends ../layout
+block content
+    .container
+        form(method='POST', action='/updateleague')
+            h2 Upraviť súťaž #{league.name}
+
+            label Názov súťaže:
+                input(name='leagueid', value='' + league.id type='hidden' required)
+                input.form-input(name='leaguename', type='text' value=league.name required)
+            .switch-field
+                input#SwitchOpen.switch(type='checkbox', name="leagueopen", value="open" checked=league.opened)
+                label(for='SwitchOpen') Otvorené prihlasovanie
+
+            input.button.submit-button(type='submit' value='Upraviť')
+            input.button.reset-button(type='reset' value='Reset')
+
+        br
+        h2 Prihlásené tímy:
+        if teams.length !== 0
+            dl.list-group.teams
+                each team in teams
+                    dt.list-group-item=team.name
+        else
+            p Nie sú prihlásené žiadne tímy
+

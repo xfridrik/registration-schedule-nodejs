@@ -240,7 +240,7 @@ router.post('/update', checkNotAuth, async (req,res)=>{
 
 // remove team from user
 router.post("/remove-team", checkNotAuth, function (req, res){
-    pool.query("UPDATE users SET team=$1 where id = $2;",[null,req.user.id], (err,result)=> {
+    pool.query("UPDATE users SET team=$1 where id = $2; DELETE FROM teams where id = $2 ",[null,req.user.id], (err)=> {
         if (err) {
             req.flash("danger", 'Nepodarilo sa odstrániť tím!');
             res.redirect("/team");

@@ -62,13 +62,9 @@ router.post('/admin/register', checkAdminExists, async(req,res) =>{
 });
 
 router.get("/settings", checkNotAuthAdmin, async function(req, res) {
-    res.render("admin/settings")
-})
-
-router.get("/addleague", checkNotAuthAdmin, async function (req, res){
     try{
         const leagues = await pool.query('SELECT * FROM leagues');
-        res.render('admin/addleague', {
+        res.render('admin/settings', {
             leagues: leagues.rows
         });
     }catch (e) {
@@ -76,11 +72,72 @@ router.get("/addleague", checkNotAuthAdmin, async function (req, res){
         req.flash("danger", 'Chyba pri hľadaní súťaží');
         res.redirect("/user");
     }
+})
+
+router.get("/addleague", checkNotAuthAdmin, async function (req, res){
+    res.render('admin/addleague');
 });
+
+router.get("/league", checkNotAuthAdmin, async function(req, res) {
+    if(!req.query.leagueid){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/settings");
+    }else {
+        pool.query("SELECT * FROM leagues where id = $1",[req.query.leagueid],(err,result)=>{
+            if(err){
+                req.flash("danger", "Nepodarilo sa nájsť záznam!");
+                res.status(401).redirect("/settings");
+            }else{
+                if(result.rows.length<1){
+                    req.flash("danger", "Nepodarilo sa nájsť súťaž!");
+                    res.status(401).redirect("/settings");
+                }else {
+                    pool.query("SELECT * FROM teams where league = $1",[result.rows[0].id],(err,result2)=>{
+                        if(err){
+                            req.flash("danger", "Nepodarilo sa nájsť prihlásené tímy!");
+                            res.status(401).redirect("/settings");
+                        }else{
+                            console.log(result2.rows)
+                            res.render("admin/editleague", {
+                                league: result.rows[0],
+                                teams: result2.rows
+                            })
+                        }
+                    })
+                }
+            }
+        });
+    }
+})
+
+router.post('/updateleague', checkNotAuthAdmin, async (req,res)=>{
+    if(!req.body.leagueid || !req.body.leaguename){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/settings");
+    }
+    let open = false;
+    if(req.body.leagueopen){
+        open = true;
+    }
+    const sql="UPDATE leagues SET name=$1, opened=$2 where id = $3;";
+    pool.query(
+        sql,[req.body.leaguename, open, req.body.leagueid],
+        (err) => {
+            console.log(err);
+            if(err){
+                req.flash("danger",'Nastala chyba!');
+                res.redirect("/");
+            }
+            else{
+                req.flash("success",'Súťaž bola upravená!');
+                res.redirect("/settings");
+            }
+        });
+});
+
 
 //Požiadavka na zmenu údajov
 router.post('/addleague', checkNotAuthAdmin, async (req,res)=>{
-    console.log(req.body.leagueopen);
     if(!req.body.startdatefirst || !req.body.startdatesecond || !req.body.nteams ){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
         res.status(401).redirect("/settings");
@@ -98,10 +155,11 @@ router.post('/addleague', checkNotAuthAdmin, async (req,res)=>{
                 req.flash("danger",'Nastala chyba!');
                 res.redirect("/");
             }
+            else{
+                req.flash("success",'Súťaž bola pridaná!');
+                res.redirect("/settings");
+            }
         });
-    req.flash("success",'Súťaž bola pridaná!');
-    res.redirect("/settings");
-
 });
 
 //kontrola usera

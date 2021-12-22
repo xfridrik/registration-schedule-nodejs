@@ -8,3 +8,15 @@ block content
                 a.nav-link.nav-admin(href='/addleague')
                     img.menu-icon(src="/img/plus.svg")
                     p.menu Pridať súťaž
+        h2 Súťaže
+        if leagues
+            dl.list-group.teams
+                each league, i in leagues
+                    dt.list-group-item=league.name
+                    dd.list-group-item.options
+                        form.options(method='GET', action="/league")
+                            input(name='leagueid', value='' + league.id type='hidden' required)
+                            input.button.submit-button(type='submit' value='Spravovať')
+
+        else
+            p Nie sú k dispozícii žiadne súťaže

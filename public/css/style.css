@@ -195,6 +195,12 @@ dd.open{
 dd.closed{
     color: #b50000;
 }
+form.options{
+    margin-top: 0;
+}
+dd.options{
+    background-color: #e0eeff;
+}
 
 .icon{
     display: block;
@@ -290,6 +296,9 @@ p.menu{
 .container.settings{
     width: 80%;
     max-width: 500px;
+}
+ul{
+    padding-left: 0;
 }
 li.settings{
     display: block;
