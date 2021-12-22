@@ -240,14 +240,31 @@ router.post('/update', checkNotAuth, async (req,res)=>{
 
 // remove team from user
 router.post("/remove-team", checkNotAuth, function (req, res){
-    pool.query("UPDATE users SET team=$1 where id = $2; DELETE FROM teams where id = $2 ",[null,req.user.id], (err)=> {
+    pool.query("SELECT team from users where id=$1",[req.user.id],(err,result)=> {
         if (err) {
-            req.flash("danger", 'Nepodarilo sa odstrániť tím!');
+            req.flash("danger", 'Nepodarilo sa nájsť tím!');
             res.redirect("/team");
-
         } else {
-            req.flash("success", 'Tím bol odstránený z účtu!');
-            res.redirect("/user");
+            pool.query("UPDATE users SET team=$1 where id = $2;", [null, req.user.id], (err) => {
+                if (err) {
+                    req.flash("danger", 'Nepodarilo sa odstrániť tím!');
+                    res.redirect("/team");
+
+                } else {
+                    pool.query("DELETE FROM teams where id = $1", [result.rows[0].team], (err) => {
+                        if (err) {
+                            console.log(err)
+                            req.flash("danger", 'Nepodarilo sa vymazať záznam!');
+                            res.redirect("/team");
+
+                        } else {
+                            req.flash("success", 'Tím bol odstránený z účtu!');
+                            res.redirect("/user");
+                        }
+                    })
+                }
+
+            })
         }
     })
 })
