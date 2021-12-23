@@ -82,8 +82,33 @@ router.get("/logout",checkNotAuth, function (req, res){
     res.redirect("/login");
 });
 
-router.get('/schedule',checkNotAuth, function(req,res){
-    res.render('schedule');
+router.get('/schedule',checkNotAuth, async function(req,res){
+    let leagues;
+    let matches;
+    let team;
+    let leagueID;
+    try {
+        if(req.user.team){
+            team=await pool.query("SELECT * FROM teams where id=$1;",[req.user.team]);
+            leagueID=team.rows[0].id;
+        }
+        else{
+            leagueID = null;
+        }
+        leagues=await pool.query("SELECT * FROM leagues;");
+        matches=await pool.query("SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id order by mat.round, mat.id");
+    }
+    catch (error){
+        console.log(error);
+        req.flash("danger","Pri generovaní nastala chyba!");
+        return res.redirect('/settings');
+    }
+    console.log(leagues,matches)
+    res.render('schedule',{
+        leagues: leagues.rows,
+        matches: matches.rows,
+        leagueID: leagueID
+    });
 });
 
 router.get('/user',checkNotAuth, async function(req,res){

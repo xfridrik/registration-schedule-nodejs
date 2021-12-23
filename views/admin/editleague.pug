@@ -13,7 +13,11 @@ block content
 
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Reset')
-
+        br
+        form(method='POST', action='/generateschedule')
+            h2 Generovať rozpis pre #{league.name}
+                input(name='leagueid', value='' + league.id type='hidden' required)
+            input.button.submit-button(type='submit' value='Generovať')
         br
         h2 Prihlásené tímy:
         if teams.length !== 0
