@@ -232,6 +232,7 @@ exports.userUpdateTeam = async (req,res) => {
     res.redirect("/team");
 };
 
+// Odstrániť tím
 exports.userRemoveTeam = (req, res) => {
     pool.query("SELECT team from users where id=$1",[req.user.id],(err,result)=> {
         if (err) {
