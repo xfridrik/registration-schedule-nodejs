@@ -17,122 +17,128 @@ block content
             input.button.remove-button(type='submit' value='ZMAZAŤ REGISTRÁCIU')
 
     else
-        if leagues
-            form.container(method='POST', action='/add')
-                h2 Zaregistrovať nový tím:
-                input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
+        - var openLeagues = false
+        if leagues.length !== 0
+            each league in leagues
+                if(league.opened)
+                    - openLeagues = true
+            if(openLeagues)
+                form.container(method='POST', action='/add')
+                    h2 Zaregistrovať nový tím:
+                    input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
 
-                label(for='league') Súťaž
-                select.form-input(id='league', name='league' required)
-                    each league, i in leagues
-                        if league.opened
-                            option(value=league.id) #{league.name}
+                    label(for='league') Súťaž
+                    select.form-input(id='league', name='league' required)
+                        each league, i in leagues
+                            if league.opened
+                                option(value=league.id) #{league.name}
 
-                label(for='pref-match') Preferovaný domáci zápas
-                select.form-input(id='pref-match', name='prefmatch', required)
+                    label(for='pref-match') Preferovaný domáci zápas
+                    select.form-input(id='pref-match', name='prefmatch', required)
 
-                input.button.submit-button(type='submit' value='Odoslať')
-                input.button.reset-button(type='reset' value='Zmazať')
-        else
+                    input.button.submit-button(type='submit' value='Odoslať')
+                    input.button.reset-button(type='reset' value='Zmazať')
+        if !openLeagues
             h2 Nie je otvorená žiadna súťaž pre prihlásenie tímu
 
-    script.
-        const league = document.getElementById("league");
-        const pref = document.getElementById("pref-match");
-        const leagues = !{JSON.stringify(leagues)};
-        if(league){
-            league.addEventListener("change", () => {
-                updatePref();
-            })
+    if leagues.length !== 0
+        script.
+            const league = document.getElementById("league");
+            const pref = document.getElementById("pref-match");
+            const leagues = !{JSON.stringify(leagues)};
+            if(league){
+                league.addEventListener("change", () => {
+                    updatePref();
+                })
 
-            function updatePref() {
-                pref.innerHTML = "";
-                for (let l in leagues) {
-                    if (leagues.hasOwnProperty(l)) {
-                        if (leagues[l].id === league.value) {
-                            let laps = 0;
-                            if (leagues[l].nteams % 2) {
-                                laps = leagues[l].nteams - 1;
-                            } else {
-                                laps = leagues[l].nteams;
-                            }
-                            let date = new Date(leagues[l].start_date_first);
-                            for (let i = 0; i < laps; i++) {
-                                var opt = document.createElement("option");
-                                opt.setAttribute("value", i.toString());
-                                if (i === 0) {
-                                    opt.innerText = "Nedefinovaný";
+                function updatePref() {
+                    pref.innerHTML = "";
+                    for (let l in leagues) {
+                        if (leagues.hasOwnProperty(l)) {
+                            if (leagues[l].id === league.value) {
+                                let laps = 0;
+                                if (leagues[l].nteams % 2) {
+                                    laps = leagues[l].nteams - 1;
                                 } else {
+                                    laps = leagues[l].nteams;
+                                }
+                                let date = new Date(leagues[l].start_date_first);
+                                for (let i = 0; i < laps; i++) {
+                                    var opt = document.createElement("option");
+                                    opt.setAttribute("value", i.toString());
+                                    if (i === 0) {
+                                        opt.innerText = "Nedefinovaný";
+                                    } else {
+                                        opt.innerText = date.toDateString()
+                                        date.setDate(date.getDate() + 7);
+                                    }
+                                    pref.append(opt)
+                                }
+                                date = new Date(leagues[l].start_date_second);
+                                for (let i = laps; i < 2 * laps - 1; i++) {
+                                    var opt = document.createElement("option");
+                                    opt.setAttribute("value", i.toString());
                                     opt.innerText = date.toDateString()
                                     date.setDate(date.getDate() + 7);
+                                    pref.append(opt)
                                 }
-                                pref.append(opt)
+                                break;
                             }
-                            date = new Date(leagues[l].start_date_second);
-                            for (let i = laps; i < 2 * laps - 1; i++) {
-                                var opt = document.createElement("option");
-                                opt.setAttribute("value", i.toString());
-                                opt.innerText = date.toDateString()
-                                date.setDate(date.getDate() + 7);
-                                pref.append(opt)
-                            }
-                            break;
                         }
+                    }
+                }
+
+                updatePref();
+            }
+
+        script.
+            const prefEdit = document.getElementById("pref-match-edit");
+            const team = !{JSON.stringify(team)};
+            let nteams;
+            let date;
+            let dateSecond;
+
+            for (let l in leagues) {
+                if (leagues.hasOwnProperty(l)) {
+                    if (leagues[l].id === team.league) {
+                        nteams = leagues[l].nteams;
+                        date = new Date(leagues[l].start_date_first);
+                        dateSecond = new Date(leagues[l].start_date_second);
                     }
                 }
             }
 
-            updatePref();
-        }
-
-    script.
-        const prefEdit = document.getElementById("pref-match-edit");
-        const team = !{JSON.stringify(team)};
-        let nteams;
-        let date;
-        let dateSecond;
-
-        for (let l in leagues) {
-            if (leagues.hasOwnProperty(l)) {
-                if (leagues[l].id === team.league) {
-                    nteams = leagues[l].nteams;
-                    date = new Date(leagues[l].start_date_first);
-                    dateSecond = new Date(leagues[l].start_date_second);
-                }
-            }
-        }
-
-        let laps = 0;
-        if (nteams % 2) {
-            laps = nteams - 1;
-        } else {
-            laps = nteams;
-        }
-        for (let i = 0; i < laps; i++) {
-            var opt = document.createElement("option");
-            opt.setAttribute("value", i.toString());
-            if (team.preferred_match === i) {
-                opt.setAttribute("selected", "selected");
-            }
-            if (i === 0) {
-                opt.innerText = "Nedefinovaný";
+            let laps = 0;
+            if (nteams % 2) {
+                laps = nteams - 1;
             } else {
-                opt.innerText = date.toDateString()
-                date.setDate(date.getDate() + 7);
+                laps = nteams;
             }
-            prefEdit.append(opt)
-        }
-        for (let i = laps; i < 2 * laps - 1; i++) {
-            var opt = document.createElement("option");
-            opt.setAttribute("value", i.toString());
-            opt.innerText = dateSecond.toDateString()
-            if(team.preferred_match === i){
-                opt.setAttribute("selected", "selected");
+            for (let i = 0; i < laps; i++) {
+                var opt = document.createElement("option");
+                opt.setAttribute("value", i.toString());
+                if (team.preferred_match === i) {
+                    opt.setAttribute("selected", "selected");
+                }
+                if (i === 0) {
+                    opt.innerText = "Nedefinovaný";
+                } else {
+                    opt.innerText = date.toDateString()
+                    date.setDate(date.getDate() + 7);
+                }
+                prefEdit.append(opt)
             }
-            dateSecond.setDate(dateSecond.getDate() + 7);
-            prefEdit.append(opt)
-        }
-        document.getElementById("pref-match-edit");
+            for (let i = laps; i < 2 * laps - 1; i++) {
+                var opt = document.createElement("option");
+                opt.setAttribute("value", i.toString());
+                opt.innerText = dateSecond.toDateString()
+                if(team.preferred_match === i){
+                    opt.setAttribute("selected", "selected");
+                }
+                dateSecond.setDate(dateSecond.getDate() + 7);
+                prefEdit.append(opt)
+            }
+            document.getElementById("pref-match-edit");
 
     script.
         function validate(form) {

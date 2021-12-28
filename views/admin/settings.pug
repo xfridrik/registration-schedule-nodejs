@@ -9,7 +9,7 @@ block content
                     img.menu-icon(src="/img/plus.svg")
                     p.menu Pridať súťaž
         h2 Súťaže
-        if leagues
+        if leagues.length !==0
             dl.list-group.teams
                 each league, i in leagues
                     dt.list-group-item=league.name

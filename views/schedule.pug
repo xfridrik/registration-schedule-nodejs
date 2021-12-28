@@ -2,7 +2,7 @@ extends layout
 block content
 
     h3 Rozpis zápasov:
-    if matches && leagues
+    if matches.length !== 0 || leagues.length !== 0
         #select-wrap
             select.form-input(id='league-select')
                 each league, i in leagues
@@ -20,23 +20,24 @@ block content
     else
         p Rozpis zápasov zatiaľ nebol zverejnený.
 
-    script.
-        let lid = "#{leagueID}";
-        if(!lid){
-            lid="#{leagues[0].id}";
-        }
-        document.getElementById("league-select").value = lid;
-        document.getElementById("league-select").addEventListener("change",(e)=>{
-            updateSchedule(e.target.value);
-        });
+    if matches.length !== 0 || leagues.length !== 0
+        script.
+            let lid = "#{leagueID}";
+            if(!lid){
+                lid="#{leagues[0].id}";
+            }
+            document.getElementById("league-select").value = lid;
+            document.getElementById("league-select").addEventListener("change",(e)=>{
+                updateSchedule(e.target.value);
+            });
 
-        function updateSchedule(id) {
-            const leagues = document.getElementsByClassName("league");
-            for (let i = 0; i < leagues.length; i++) {
-                leagues[i].style.display="none";
-                if(leagues[i].getAttribute("id")==="l"+id){
-                    leagues[i].style.display="block";
+            function updateSchedule(id) {
+                const leagues = document.getElementsByClassName("league");
+                for (let i = 0; i < leagues.length; i++) {
+                    leagues[i].style.display="none";
+                    if(leagues[i].getAttribute("id")==="l"+id){
+                        leagues[i].style.display="block";
+                    }
                 }
             }
-        }
-        updateSchedule(lid);
+            updateSchedule(lid);

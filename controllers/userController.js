@@ -67,7 +67,7 @@ exports.showSchedule = async (req,res) => {
     catch (error){
         console.log(error);
         req.flash("danger","Pri generovaní nastala chyba!");
-        return res.redirect('/settings');
+        return res.redirect('/');
     }
 
     res.render('schedule',{

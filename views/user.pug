@@ -3,7 +3,7 @@ block content
 
     h2 Vitaj #{name}!
     h3 Aktuálne súťaže:
-    if leagues
+    if leagues.length !== 0
         dl.list-group.teams
             each league, i in leagues
                 dt.list-group-item=league.name
