@@ -113,93 +113,169 @@ exports.leagueGenerateSchedule = async (req,res) => {
         return res.redirect('/settings');
     }
 
-    let pocetKol;
-    let pocetZapasov;
-    let tabulka=[];
-    let zapasy=[];
-
+    // Počet kôl
+    let nrounds;
+    // Počet zápasov v kole
+    let nmatches;
+    // Počet tímov
+    let nteams = teams.rows.length;
     // Vypocitaj pocet zapasov
-    if(teams.rows.length%2===0){
-        pocetKol=teams.rows.length-1;
-        pocetZapasov=teams.rows.length/2;
+    if(nteams%2===0){
+        nrounds=nteams-1;
+        nmatches=nteams/2;
     }
     else{
-        pocetKol=teams.rows.length;
-        pocetZapasov=(teams.rows.length+1)/2;
+        nrounds=nteams;
+        nmatches=(nteams+1)/2;
     }
-    let count=0;
-    //vytvori 2D tabulku
-    for (let i = 0; i < pocetKol; i++) {
-        tabulka.push([])
-        for (let j = 0; j < pocetZapasov; j++) {
-            tabulka[i].push(count%pocetKol+1);
+
+    const matches = createMatchesTable(nrounds, nmatches, nteams, date, dateSecond)
+    const orderedTeams = sortTeams(teams.rows, matches);
+
+    try{
+        for(let i=0; i<matches.length; i++){
+            for(let j=0; j<matches[i].length; j++){
+                await pool.query(
+                    'INSERT INTO matches (home, guest, round, date, league) VALUES ($1,$2,$3,$4,$5)',
+                    [orderedTeams[matches[i][j].hometeam-1].id,orderedTeams[matches[i][j].guestteam-1].id,i+1,matches[i][j].date,id],
+                )
+            }
+        }
+        req.flash("success","Rozpis zápasov bol vygenerovaný");
+        res.redirect('/settings');
+
+    }catch (e) {
+        console.log(e);
+        req.flash("danger","Rozpis zápasov sa nepodarilo uložiť");
+        res.redirect('/settings');
+    }
+};
+
+// Zoradí tímy tak, aby vysiel domaci zapas na ich preferovany zapas ak je to mozne,
+// ostatne timy zoradi postupne do zostavajucich volnych miest
+const sortTeams = (teams, matches) => {
+    const notOrderedTeams=teams.slice();
+    const orderedTeams=[];
+    for (let i = 0; i < notOrderedTeams.length; i++) orderedTeams[i] = null;
+
+    for(let i=0; i<notOrderedTeams.length; i++){
+        for(let j=0; j<matches.length; j++){
+            // Preferovaný zápas v danom kole - najdi volny domaci tím
+            if(j+1 === notOrderedTeams[i].preferred_match){
+                for(let k=0; k<matches[j].length; k++){
+                    // Ak je nájdené volné miesto - priradí ho do ordered a vymaže z notOrdered
+                    if(orderedTeams[(matches[j][k].hometeam)-1]===null){
+                        orderedTeams[(matches[j][k].hometeam)-1]=notOrderedTeams[i];
+                        notOrderedTeams[i]=null;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    console.log("Zoradene timy")
+    console.log(notOrderedTeams)
+    console.log(orderedTeams)
+    console.log("-------------------------\n Doplnene timy")
+    // Pridať nepriradené tímy
+    for(let i=0; i<notOrderedTeams.length; i++){
+        if(notOrderedTeams[i]!==null){
+            for(let j=0; j<orderedTeams.length; j++){
+                if(orderedTeams[j]===null){
+                    orderedTeams[j]=notOrderedTeams[i];
+                    notOrderedTeams[i]=null;
+                    break;
+                }
+            }
+        }
+    }
+    console.log(notOrderedTeams)
+    console.log(orderedTeams)
+    console.log("-------------------------")
+    return orderedTeams;
+}
+
+// Vytvorí rozpis zápasov - bregerovu tabulku
+const createMatchesTable = (nrounds, nmatches, nteams, date, dateSecond) => {
+    let table=[];
+    let matches=[];
+
+    // Vytvorí 2D tabuľku s účastníkmi (Schurigova metoda) - domáce tímy
+    let count = 0;
+    for (let i = 0; i < nrounds; i++) {
+        table.push([]);
+        for (let j = 0; j < nmatches; j++) {
+            table[i].push(count % nrounds + 1);
             count++;
         }
     }
-    for (let i = 0; i < pocetKol; i++) {
-        zapasy.push([])
-        for (let j = 0; j < pocetZapasov; j++) {
-            if(j===0){
-                //ak je neparny pocet timov maju pauzu
-                if(teams.rows.length%2!==0){
-                    zapasy[i].push({
-                        hometeam: tabulka[i][j],
-                        guestteam: tabulka[i][j],//null,
+
+    // Spáruje tímy do zápasov
+    for (let i = 0; i < nrounds; i++) {
+        matches.push([]);
+        for (let j = 0; j < nmatches; j++) {
+            // Prvý zápas v kole
+            if (j === 0) {
+                // Ak je neparny pocet timov maju pauzu
+                if (nteams % 2 !== 0) {
+                    matches[i].push({
+                        hometeam: table[i][j],
+                        guestteam: table[i][j],//null,
+                        round: i+1,
                         date: new Date(date)
                     });
                 }
-                else{
-                    if(i%2===0){
-                        //striedanie posledneho timu
-                        zapasy[i].push({
-                            hometeam: tabulka[i][j],
-                            guestteam: teams.rows.length,
+                // Parny pocet timov - striedanie posledneho timu v prvom zápase kola
+                else {
+                    if (i % 2 === 0) {
+                        matches[i].push({
+                            hometeam: table[i][j],
+                            guestteam: nteams,
+                            round: i+1,
                             date: new Date(date)
                         });
-                    }
-                    else{
-                        zapasy[i].push({
-                            hometeam: teams.rows.length,
-                            guestteam: tabulka[i][j],
+                    } else {
+                        matches[i].push({
+                            hometeam: nteams,
+                            guestteam: table[i][j],
+                            round: i+1,
                             date: new Date(date)
                         });
                     }
                 }
             }
+            // Ostatne zapasy
             else {
-                zapasy[i].push({
-                    hometeam: tabulka[i][j],
-                    guestteam: tabulka[(i + 1) % pocetKol][pocetZapasov - j - 1],
+                matches[i].push({
+                    hometeam: table[i][j],
+                    guestteam: table[(i + 1) % nrounds][nmatches - j - 1],
+                    round: i+1,
                     date: new Date(date)
                 });
             }
-            //Preferovaný zápas
-            const matchID = await pool.query(
-                'INSERT INTO matches (home, guest, round, date, league) VALUES ($1,$2,$3,$4,$5) RETURNING id',
-                [teams.rows[zapasy[i][j].hometeam-1].id,teams.rows[zapasy[i][j].guestteam-1].id,i+1,zapasy[i][j].date,id],
-            )
-
-            if(i+1===teams.rows[zapasy[i][j].guestteam-1].preferred_match){
-                await preferredMatchSwap(matchID.rows[0].id);
-            }
         }
-        date.setDate(date.getDate()+7);
+        date.setDate(date.getDate() + 7);
     }
-    console.log(zapasy);
 
-    req.flash("success","Rozpis zápasov bol vygenerovaný");
+    /* Druha cast - vymena domacich timov */
 
-    res.redirect('/settings');
+    const firstMatches = matches.slice();
+    date = dateSecond;
+    let round = nrounds;
 
-};
-
-const preferredMatchSwap = async (matchID) => {
-    const id = matchID;
-    const match = await pool.query(
-        "SELECT * FROM matches where id = $1", [id]
-    );
-
-    pool.query(
-        "UPDATE matches SET home = $1, guest = $2 where id = $3", [match.rows[0].guest, match.rows[0].home, id]
-    );
+    for(let i = 0; i < firstMatches.length; i++){
+        matches.push([]);
+        for(let j = 0; j < firstMatches[0].length; j++){
+            matches[round].push({
+                hometeam: firstMatches[i][j].guestteam,
+                guestteam: firstMatches[i][j].hometeam,
+                round: round+1,
+                date: new Date(date)
+            });
+        }
+        round++;
+        date.setDate(date.getDate() + 7);
+    }
+    return matches;
 }
