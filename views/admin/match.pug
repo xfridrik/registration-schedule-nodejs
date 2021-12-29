@@ -1,0 +1,16 @@
+extends ../layout
+block content
+    .container.settings
+        h2 Úprava zápasu
+        h3  #{hometeam} - #{guestteam}
+        form(method='POST', action="/match/update")
+            label Dátum zápasu:
+                input.form-input(name='date', value=date type='date' required)
+                input.form-input(name='id', value=id type='hidden' required)
+            input.button.submit-button(type='submit' value='Upraviť')
+        br
+        form(method='POST', action="/match/reverse")
+            label Domáci tím:
+                input.form-control(name='id', value=id type='hidden' required)
+            input.button.submit-button(type='submit' value='Vymeniť')
+

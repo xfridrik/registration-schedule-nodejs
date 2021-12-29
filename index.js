@@ -31,6 +31,8 @@ app.use(function (req,res,next){
     next();
 });
 
+
+
 app.use('/',users);
 app.use('/',admin);
 

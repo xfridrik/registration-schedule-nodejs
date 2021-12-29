@@ -20,9 +20,17 @@ exports.showLeague = async function(req, res) {
                             req.flash("danger", "Nepodarilo sa nájsť prihlásené tímy!");
                             res.status(401).redirect("/settings");
                         }else{
-                            res.render("admin/editleague", {
-                                league: result.rows[0],
-                                teams: result2.rows
+                            pool.query("SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id where mat.league=$1 order by mat.round, mat.id",[result.rows[0].id],(err,result3)=>{
+                                if(err){
+                                    req.flash("danger", "Nepodarilo sa nájsť zápasy!");
+                                    res.status(401).redirect("/settings");
+                                }else{
+                                    res.render("admin/editleague", {
+                                        league: result.rows[0],
+                                        teams: result2.rows,
+                                        matches: result3.rows
+                                    })
+                                }
                             })
                         }
                     })

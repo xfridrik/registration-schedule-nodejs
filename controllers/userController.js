@@ -56,7 +56,7 @@ exports.showSchedule = async (req,res) => {
     try {
         if(req.user.team){
             team = await pool.query("SELECT * FROM teams where id=$1;",[req.user.team]);
-            leagueID=team.rows[0].id;
+            leagueID=team.rows[0].league;
         }
         else{
             leagueID = null;
@@ -89,7 +89,7 @@ exports.userHome =  async (req,res) => {
     }
     catch (e) {
         req.flash("danger", 'Nastala chyba!');
-        res.redirect("/");
+        res.redirect("/logout");
     }
 };
 

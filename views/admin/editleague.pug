@@ -14,16 +14,29 @@ block content
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Reset')
         br
-        form(method='POST', action='/generateschedule')
-            h2 Generovať rozpis pre #{league.name}
-                input(name='leagueid', value='' + league.id type='hidden' required)
-            input.button.submit-button(type='submit' value='Generovať')
-        br
         h2 Prihlásené tímy:
         if teams.length !== 0
             dl.list-group.teams
                 each team in teams
                     dt.list-group-item=team.name
+            br
+            form(method='POST', action='/generateschedule')
+                h2 Generovať rozpis pre #{league.name}
+                    input(name='leagueid', value='' + league.id type='hidden' required)
+                input.button.submit-button(type='submit' value='Generovať')
         else
             p Nie sú prihlásené žiadne tímy
 
+        if matches.length > 0
+            dl(id="l" + league.id, class="league")
+                h2 Rozpis zápasov
+                each match,i in matches
+                    dt.list-group-item.zapas="Kolo " + match.round + " - " + match.date.toDateString()
+                        if(match.home === match.guest)
+                            dd.list-group-item.zapas=match.home + " - VOĽNO"
+                        else
+                            dd.list-group-item.zapas=match.home + " - " + match.guest
+                        dd.list-group-item.zapas
+                            form(method='GET', action="/match")
+                                input.form-control(name='matchid', value=match.id type='hidden' required)
+                                input.button.submit-button(type='submit' value='Upraviť zápas')
