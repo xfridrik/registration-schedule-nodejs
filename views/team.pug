@@ -8,11 +8,13 @@ block content
             label Nový názov tímu:
                 input.form-input(name='nazov', value='' + team.name type='text' required)
 
-            label preferovaný domáci zápas:
+            label Preferovaný domáci zápas*:
                 select.form-input(id='pref-match-edit', name='prefmatch', required)
 
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Resetovať')
+            p *Po zverejnení rozpisu zmena domáceho zápasu nemá efekt
+
         form(method='POST', action="/remove-team", onsubmit="return validate(this);")
             input.button.remove-button(type='submit' value='ZMAZAŤ REGISTRÁCIU')
 

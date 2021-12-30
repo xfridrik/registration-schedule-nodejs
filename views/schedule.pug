@@ -13,17 +13,17 @@ block content
                 each match,i in matches
                     if match.league === league.id
                         if match.round % 2
-                            dt.list-group-item.zapas="Kolo "+match.round +" - "+match.date.toDateString()
+                            dt.list-group-item="Kolo "+match.round +" - "+match.date.toDateString()
                             if(match.home === match.guest)
-                                dd.list-group-item.zapas=match.home + " - VOĽNO"
+                                dd.list-group-item=match.home + " - VOĽNO"
                             else
-                                dd.list-group-item.zapas=match.home + " - " + match.guest
+                                dd.list-group-item=match.home + " - " + match.guest
                         else
-                            dt.list-group-item.zapas="Kolo "+match.round +" - "+match.date.toDateString()
+                            dt.list-group-item.second="Kolo "+match.round +" - "+match.date.toDateString()
                             if(match.home===match.guest)
-                                dd.list-group-item.zapas.second=match.home + " - VOĽNO"
+                                dd.list-group-item=match.home + " - VOĽNO"
                             else
-                                dd.list-group-item.zapas.second=match.home + " - " + match.guest
+                                dd.list-group-item=match.home + " - " + match.guest
     else
         p Rozpis zápasov zatiaľ nebol zverejnený.
 

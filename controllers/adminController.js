@@ -130,8 +130,6 @@ exports.swapMatchTeams = async (req,res) => {
     );
 };
 
-
-
 const dateToStringHTML = (date)=>{
     let dateString =  date.getFullYear().toString() + '-'
     if(date.getMonth()+1<10){
@@ -150,5 +148,5 @@ const dateToStringHTML = (date)=>{
 
 const missingInputData = (req,res) => {
     req.flash("danger", 'Neboli zadané požadované údaje');
-    return res.redirect("/");
+    return res.status(401).redirect("/");
 }

@@ -39,6 +39,8 @@ router.post('/addleague', checkNotAuthAdmin, leagueController.addLeague);
 
 router.post('/generateschedule', checkNotAuthAdmin, leagueController.leagueGenerateSchedule);
 
+router.post('/removeschedule', checkNotAuthAdmin, leagueController.leagueRemoveSchedule);
+
 router.get("/match", checkNotAuthAdmin, adminController.match);
 
 router.post("/match/swap", checkNotAuthAdmin, adminController.swapMatchTeams);

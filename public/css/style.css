@@ -95,7 +95,7 @@ h3{
     border-radius: .25rem;
     margin: 5px;
     padding: .375rem .75rem;
-
+    cursor: pointer;
 }
 .submit-button{
     background-color: #3e7be5;
@@ -111,6 +111,12 @@ h3{
     background-color: #b50000;
     color: #FFF;
     border-color: #b50000;
+}
+
+.edit-button{
+    background-color: #EB8963;
+    color: #FFF;
+    border-color: #EB8963;
 }
 
 input:focus,#register:focus,#login:focus{
@@ -142,7 +148,22 @@ form{
     width: fit-content;
     margin: 20px auto auto;
 }
-
+form.edit{
+    margin-top: 0;
+}
+.inline{
+    display: inline-block;
+}
+hr{
+    border-top: solid 2px #ffffff;
+}
+section{
+    background-color: #dbebff;
+    border-radius: 0.5rem;
+    padding-bottom: 6px;
+    margin-bottom: 15px;
+    padding-top: 10px;
+}
 .container{
     background-color: #FFFFFF;
     border-radius: .4rem;
@@ -151,6 +172,7 @@ form{
     max-width: 80%;
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
 }
 
 label{
@@ -166,7 +188,7 @@ dt.list-group-item{
     color: white;
     padding: 0.5rem .5rem;
     border-radius: 0.3rem 0.3rem 0 0 ;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 dd.list-group-item{
     background-color: #ffffff;
@@ -178,9 +200,22 @@ dd.list-group-item{
 dd.list-group-item:last-child{
     border-radius: 0 0 0.3rem 0.3rem;
 }
-
-dd.second{
-    background-color: #d6e9ff;
+dt.zapas{
+    border: solid white ;
+    border-bottom: 0;
+}
+dd.zapas{
+    border: solid white;
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+dd.zapas.edit-end{
+    border: solid white;
+    border-radius: 0 0 0.3rem 0.3rem;
+    border-top: 0;
+}
+dt.second{
+    background-color: #4A5F82;
 }
 
 .list-group-item{

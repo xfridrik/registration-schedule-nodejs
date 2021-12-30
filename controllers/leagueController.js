@@ -159,6 +159,25 @@ exports.leagueGenerateSchedule = async (req,res) => {
     }
 };
 
+exports.leagueRemoveSchedule = async (req, res) => {
+    const id = req.body.leagueid; // ID ligy
+
+    if(!id){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        return res.status(401).redirect("/settings");
+    }
+
+    pool.query("DELETE FROM matches where league = $1",[id],(err)=>{
+        if(err){
+            req.flash("danger","Nepodarilo sa odstrániť zápasy!");
+            return res.redirect("/settings");
+        }else {
+            req.flash("success","Rozpis zápasov bol odstránený!");
+            return res.redirect("/settings");
+        }
+    })
+};
+
 // Zoradí tímy tak, aby vysiel domaci zapas na ich preferovany zapas ak je to mozne,
 // ostatne timy zoradi postupne do zostavajucich volnych miest
 const sortTeams = (teams, matches) => {
