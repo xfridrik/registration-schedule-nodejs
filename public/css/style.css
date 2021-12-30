@@ -162,7 +162,6 @@ dd.list-group-item.zoznam:nth-child(even) {
 }
 
 dt.list-group-item{
-    cursor: pointer;
     background-color: #3d7ce7;
     color: white;
     padding: 0.5rem .5rem;
@@ -179,6 +178,11 @@ dd.list-group-item{
 dd.list-group-item:last-child{
     border-radius: 0 0 0.3rem 0.3rem;
 }
+
+dd.second{
+    background-color: #d6e9ff;
+}
+
 .list-group-item{
     margin: 0 auto;
     text-align: center;

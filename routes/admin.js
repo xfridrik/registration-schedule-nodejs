@@ -41,6 +41,11 @@ router.post('/generateschedule', checkNotAuthAdmin, leagueController.leagueGener
 
 router.get("/match", checkNotAuthAdmin, adminController.match);
 
+router.post("/match/swap", checkNotAuthAdmin, adminController.swapMatchTeams);
+
+router.post("/match/update", checkNotAuthAdmin, adminController.editMatchDate);
+
+
 // Kontrola administrátora
 function checkNotAuthAdmin(req, res, next) {
     if (req.isAuthenticated()) {
