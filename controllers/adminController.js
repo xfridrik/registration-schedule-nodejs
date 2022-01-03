@@ -27,19 +27,23 @@ exports.adminRegister = async(req,res) => {
                 req.flash("danger", "Registráciu sa nepodarilo vykonať")
                 console.log(e);
             }
-            res.render("login");
+            if(req.body.new){
+                res.redirect("/settings");
+            }else{
+                res.redirect("/login");
+            }
         } else {
             // email already registered
             if (users.rows.length > 0) {
                 console.log("email obsadeny")
                 req.flash("danger", 'Email už je registrovaný!');
             }
-            res.render("admin/register");
+            res.redirect("/");
         }
     }catch (e) {
         console.log(e);
         req.flash("danger", "Registráciu sa nepodarilo vykonať")
-        res.render("admin/register");
+        res.redirect("/");
     }
 };
 
@@ -129,6 +133,73 @@ exports.swapMatchTeams = async (req,res) => {
         }
     );
 };
+
+exports.teamRegistration = async (req,res) => {
+    try{
+        const leagues = await pool.query('SELECT * FROM leagues');
+        res.render('admin/addteam',{
+            leagues:leagues.rows
+        });
+    }
+    catch (e) {
+        req.flash("danger", 'Nastala chyba!');
+        res.redirect("/");
+    }
+};
+
+
+// Pridať tím
+exports.adminAddTeam = async (req,res) => {
+    //kontrola zadania potrebných údajov na query
+    if(!req.body.nazov || !req.body.league) return missingInputData(req, res);
+
+    const name = req.body.nazov;
+    const league = req.body.league;
+    const preferred_match = req.body.prefmatch || 0;
+
+    const sql = "INSERT INTO teams (name, preferred_match, league) VALUES ($1,$2,$3)";
+    const sqlCheck = "SELECT * from teams where name = $1";
+    const sqlCheck2 = "SELECT * from leagues where id = $1";
+
+    let todo;
+    let leagues;
+    try{
+        todo = await pool.query(sqlCheck,[name]);
+        leagues = await pool.query(sqlCheck2,[league]);
+    }catch (e) {
+        console.log(e);
+        req.flash("danger", 'Chyba pri komunikácii s databázou!');
+        return res.redirect("/settings");
+    }
+
+    if (todo.rows.length > 0) { // tim uz existuje
+        req.flash("danger", 'Tím s rovnakým názvom už existuje!');
+        return res.redirect("/settings");
+
+    }else if(leagues.rows.length !== 1) { // sutaz neexistuje
+        req.flash("danger", 'Zadaná súťaž nebola nájdená!');
+        return res.redirect("/settings");
+
+    }else if(!leagues.rows[0].opened){
+        req.flash("danger", 'Prihlasovanie do súťaže bolo ukončené!');
+        return res.redirect("/settings");
+
+    }else { // pridá tím do db
+        pool.query(
+            sql, [name, preferred_match, league], (err) => {
+                if(err){
+                    console.log(err)
+                    req.flash("danger", 'Nepodarilo sa registrovať tím!');
+                    res.redirect("/team");
+                }
+                else{
+                    req.flash("success", 'Tím bol pridaný!');
+                    return res.redirect("/settings");
+                }
+            });
+    }
+};
+
 
 const dateToStringHTML = (date)=>{
     let dateString =  date.getFullYear().toString() + '-'

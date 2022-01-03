@@ -1,7 +1,7 @@
 extends ../layout
 block content
-    .container.settings
-        form(method='POST', action='/updateleague')
+    .settings
+        form.container(method='POST', action='/updateleague')
             h2 Upraviť súťaž #{league.name}
 
             label Názov súťaže:
@@ -13,46 +13,3 @@ block content
 
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Reset')
-        br
-        section
-            h2 Prihlásené tímy:
-            if teams.length !== 0
-                dl.list-group.teams
-                    each team in teams
-                        dt.list-group-item=team.name
-                br
-                hr
-                section
-                    h2 Generovať rozpis pre #{league.name}
-                    form.inline(method='POST', action='/generateschedule', onsubmit="return validateGenerate(this);")
-                        input(name='leagueid', value='' + league.id type='hidden' required)
-                        input.button.submit-button(type='submit' value='Generovať zápasy')
-
-                    form.inline(method='POST', action='/removeschedule', onsubmit="return validateRemove(this);")
-                        input(name='leagueid', value='' + league.id type='hidden' required)
-                        input.button.remove-button(type='submit' value='Zmazať zápasy')
-            else
-                p Nie sú prihlásené žiadne tímy
-
-        if matches.length > 0
-            section
-                h2 Rozpis zápasov
-                dl(id="l" + league.id, class="league")
-                    each match,i in matches
-                        dt.list-group-item.zapas="Kolo " + match.round + " - " + match.date.toDateString()
-                            if(match.home === match.guest)
-                                dd.list-group-item.zapas=match.home + " - VOĽNO"
-                            else
-                                dd.list-group-item.zapas=match.home + " - " + match.guest
-                            dd.list-group-item.zapas.edit-end
-                                form.edit(method='GET', action="/match")
-                                    input.form-control(name='matchid', value=match.id type='hidden' required)
-                                    input.button.edit-button(type='submit' value='Upraviť zápas')
-
-    script.
-        function validateRemove(form) {
-            return confirm('Týmto odstrániš všetky zápasy v súťaži');
-        }
-        function validateGenerate(form) {
-            return confirm('Týmto sa odstránia všetky zápasy v súťaži a vygenerujú sa nové');
-        }

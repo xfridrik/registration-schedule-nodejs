@@ -1,22 +1,35 @@
 extends ../layout
 block content
-
-    h2 Nastavenia
     .container.settings
+        h2 Nastavenia
         ul
             li.settings
-                a.nav-link.nav-admin(href='/addleague')
-                    img.menu-icon(src="/img/plus.svg")
-                    p.menu Pridať súťaž
+                a.nav-link.nav-admin.setts(href='/addleague')
+                    img.menu-icon.setts(src="/img/plus.svg")
+                    p.menu.setts Pridať súťaž
+            li.settings
+                a.nav-link.nav-admin.setts(href='/addadmin')
+                    img.menu-icon.setts(src="/img/plus.svg")
+                    p.menu.setts Pridať administrátora
+            li.settings
+                a.nav-link.nav-admin.setts(href='/addteam')
+                    img.menu-icon.setts(src="/img/plus.svg")
+                    p.menu.setts Pridať tím
         h2 Súťaže
         if leagues.length !==0
             dl.list-group.teams
                 each league, i in leagues
                     dt.list-group-item=league.name
                     dd.list-group-item.options
-                        form.options(method='GET', action="/league")
+                        form.options.inline(method='GET', action="/league")
                             input(name='leagueid', value='' + league.id type='hidden' required)
                             input.button.submit-button(type='submit' value='Spravovať')
+                        form.options.inline(method='GET', action="/leagueteams")
+                            input(name='leagueid', value='' + league.id type='hidden' required)
+                            input.button.submit-button(type='submit' value='Tímy')
+                        form.options.inline(method='GET', action="/leagueschedule")
+                            input(name='leagueid', value='' + league.id type='hidden' required)
+                            input.button.submit-button(type='submit' value='Rozpis zápasov')
 
         else
             p Nie sú k dispozícii žiadne súťaže

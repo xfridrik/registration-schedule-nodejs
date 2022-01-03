@@ -1,7 +1,29 @@
 const pool= require('../config/db');
 
-// Zobrazí ligu s id
 exports.showLeague = async function(req, res) {
+    if(!req.query.leagueid){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/settings");
+    }else {
+        pool.query("SELECT * FROM leagues where id = $1",[req.query.leagueid],(err,result)=>{
+            if(err){
+                req.flash("danger", "Nepodarilo sa nájsť záznam!");
+                res.status(401).redirect("/settings");
+            }else{
+                if(result.rows.length<1){
+                    req.flash("danger", "Nepodarilo sa nájsť súťaž!");
+                    res.status(401).redirect("/settings");
+                }else {
+                    res.render("admin/editleague", {
+                        league: result.rows[0]
+                    })
+                }
+            }
+        });
+    }
+};
+
+exports.showLeagueSchedule = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
         res.status(401).redirect("/settings");
@@ -25,7 +47,7 @@ exports.showLeague = async function(req, res) {
                                     req.flash("danger", "Nepodarilo sa nájsť zápasy!");
                                     res.status(401).redirect("/settings");
                                 }else{
-                                    res.render("admin/editleague", {
+                                    res.render("admin/leagueschedule", {
                                         league: result.rows[0],
                                         teams: result2.rows,
                                         matches: result3.rows
@@ -39,6 +61,25 @@ exports.showLeague = async function(req, res) {
         });
     }
 };
+
+exports.showLeagueTeams = async function(req, res) {
+    if(!req.query.leagueid){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        res.status(401).redirect("/settings");
+    }else {
+        pool.query("SELECT * FROM teams where league = $1",[req.query.leagueid],(err,result)=>{
+            if(err){
+                req.flash("danger", "Nepodarilo sa nájsť prihlásené tímy!");
+                res.status(401).redirect("/settings");
+            }else{
+                res.render("admin/leagueteams", {
+                    teams: result.rows
+                })
+            }
+        })
+    }
+};
+
 
 exports.updateLeague = async (req,res) => {
     if(!req.body.leagueid || !req.body.leaguename){

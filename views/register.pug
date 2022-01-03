@@ -1,14 +1,71 @@
 extends layout
 block content
-    form.container(method='POST', action='/register')
+    form.container(method='POST', action='/register', onsubmit="return validateForm()")
         h2 Registrovať sa
         label
             input.form-input(name='meno', type='text', placeholder='Meno' required)
         label
             input.form-input(name='email', type='email', placeholder='E-mailová adresa' required)
         label
-            input.form-input(name='email2', type='email', placeholder='Zopakuj e-mail' required)
+            input.form-input(id="heslo" name='heslo', type='password', placeholder='Heslo' required, oninput="validate();")
         label
-            input.form-input(name='heslo', type='password', placeholder='Heslo' required)
+            input.form-input(id="heslo2" name='heslo2', type='password', placeholder='Zopakuj heslo' required, oninput="validate();")
         input.button.submit-button(type='submit' value='Registrovať')
         input.button.reset-button(type='reset' value='Zmazať')
+
+    script.
+        function validateForm(){
+            let ret = true;
+            const m = document.querySelectorAll(".messages");
+            m.forEach((mes)=>{
+                mes.remove()
+            });
+            const msgs = document.createElement("div");
+            msgs.classList.add("messages");
+            const header = document.getElementsByTagName("header");
+            header[0].parentNode.insertBefore(msgs, header[0].nextSibling);
+            if(!znaky()){
+                const m1=document.createElement("div");
+                m1.classList.add("message");
+                m1.classList.add("message-danger");
+                m1.innerText="Heslo musí obsahovať minimálne 6 znakov!";
+                msgs.appendChild(m1);
+                ret = false;
+            }
+            if(!upheslo()){
+                const m1 = document.createElement("div");
+                m1.classList.add("message");
+                m1.classList.add("message-danger");
+                m1.innerText = "Zadané heslá sa nezhodujú!";
+                msgs.appendChild(m1);
+                ret = false;
+            }
+            return ret;
+        }
+        function validate(){
+            upheslo();
+            znaky();
+        }
+        function upheslo() {
+            if(document.getElementById('heslo').value === document.getElementById('heslo2').value){
+                document.getElementById('heslo2').classList.add("correct");
+                document.getElementById('heslo2').classList.remove("incorrect");
+                return true;
+            }else{
+                document.getElementById('heslo2').classList.remove("correct");
+                document.getElementById('heslo2').classList.add("incorrect");
+                return false;
+            }
+        }
+        function znaky() {
+            if (document.getElementById('heslo').value.length<6){
+                document.getElementById('heslo').classList.remove("correct");
+                document.getElementById('heslo').classList.add("incorrect");
+                return false;
+            }
+            else {
+                document.getElementById('heslo').classList.add("correct");
+                document.getElementById('heslo').classList.remove("incorrect");
+                return true;
+            }
+        }

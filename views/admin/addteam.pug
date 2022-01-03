@@ -1,0 +1,75 @@
+extends ../layout
+block content
+    - var openLeagues = false
+    if leagues.length !== 0
+        each league in leagues
+            if(league.opened)
+                - openLeagues = true
+        if(openLeagues)
+            form.container(method='POST', action='/addteam')
+                h2 Zaregistrovať nový tím:
+                input.form-input(name='nazov', type='text', placeholder="Názov tímu" required)
+
+                label(for='league') Súťaž
+                select.form-input(id='league', name='league' required)
+                    each league, i in leagues
+                        if league.opened
+                            option(value=league.id) #{league.name}
+
+                label(for='pref-match') Preferovaný domáci zápas
+                select.form-input(id='pref-match', name='prefmatch', required)
+
+                input.button.submit-button(type='submit' value='Odoslať')
+                input.button.reset-button(type='reset' value='Zmazať')
+    if !openLeagues
+        h2 Najprv musíš vytvoriť súťaž alebo povoliť prihlasovanie!
+
+
+    script.
+        const league = document.getElementById("league");
+        const pref = document.getElementById("pref-match");
+        const leagues = !{JSON.stringify(leagues)};
+        if (league) {
+            league.addEventListener("change", () => {
+                updatePref();
+            })
+
+            function updatePref() {
+                pref.innerHTML = "";
+                for (let l in leagues) {
+                    if (leagues.hasOwnProperty(l)) {
+                        if (leagues[l].id === league.value) {
+                            let laps = 0;
+                            if (leagues[l].nteams % 2) {
+                                laps = leagues[l].nteams - 1;
+                            } else {
+                                laps = leagues[l].nteams;
+                            }
+                            let date = new Date(leagues[l].start_date_first);
+                            for (let i = 0; i < laps; i++) {
+                                var opt = document.createElement("option");
+                                opt.setAttribute("value", i.toString());
+                                if (i === 0) {
+                                    opt.innerText = "Nedefinovaný";
+                                } else {
+                                    opt.innerText = date.toDateString()
+                                    date.setDate(date.getDate() + 7);
+                                }
+                                pref.append(opt)
+                            }
+                            date = new Date(leagues[l].start_date_second);
+                            for (let i = laps; i < 2 * laps - 1; i++) {
+                                var opt = document.createElement("option");
+                                opt.setAttribute("value", i.toString());
+                                opt.innerText = date.toDateString()
+                                date.setDate(date.getDate() + 7);
+                                pref.append(opt)
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            updatePref();
+        }

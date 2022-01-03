@@ -31,7 +31,11 @@ router.get("/addleague", checkNotAuthAdmin, (req, res) => {
     res.render('admin/addleague');
 });
 
-router.get("/league", checkNotAuthAdmin, leagueController.showLeague)
+router.get("/league", checkNotAuthAdmin, leagueController.showLeague);
+
+router.get("/leagueschedule", checkNotAuthAdmin, leagueController.showLeagueSchedule);
+
+router.get("/leagueteams", checkNotAuthAdmin, leagueController.showLeagueTeams);
 
 router.post('/updateleague', checkNotAuthAdmin, leagueController.updateLeague);
 
@@ -47,6 +51,15 @@ router.post("/match/swap", checkNotAuthAdmin, adminController.swapMatchTeams);
 
 router.post("/match/update", checkNotAuthAdmin, adminController.editMatchDate);
 
+router.get('/addteam',checkNotAuthAdmin, adminController.teamRegistration);
+
+router.post('/addteam', checkNotAuthAdmin, adminController.adminAddTeam);
+
+router.get('/addadmin',checkNotAuthAdmin, ((req, res) => {
+    res.render('admin/addadmin');
+}));
+
+router.post('/addadmin', checkNotAuthAdmin, adminController.adminRegister);
 
 // Kontrola administrátora
 function checkNotAuthAdmin(req, res, next) {

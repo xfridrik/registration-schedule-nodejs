@@ -127,6 +127,21 @@ input:focus,#register:focus,#login:focus{
     box-shadow: 0 0 1px 3px #a8c3f3;
 }
 
+input.correct:focus{
+    border-color: #00c618;
+    box-shadow: 0 0 1px 3px #b4f5bb;
+}
+.form-input.correct{
+    border: 1px solid #00c618;
+}
+input.incorrect:focus{
+    border-color: #c60000;
+    box-shadow: 0 0 1px 3px #f5b4b4;
+}
+.form-input.incorrect{
+    border: 1px solid #c60000;
+}
+
 .form-input {
     display: block;
     padding: .6rem .9rem;
@@ -175,6 +190,10 @@ section{
     text-align: center;
 }
 
+section.container{
+    max-width: 660px;
+    background-color: ghostwhite;
+}
 label{
     color: #2168e1;
 }
@@ -335,23 +354,23 @@ p.menu{
 .container.settings{
     width: 80%;
     max-width: 500px;
+    margin-top: 20px;
 }
 ul{
     padding-left: 0;
 }
 li.settings{
     display: block;
-    margin: 5px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 5px auto;
     border-style: solid;
     border-width: 2px;
     border-color: white;
     border-radius: 10px;
     background-color: #4191ff;
     padding: 0 5px 0 0;
-    min-width: 80px;
-    width: 35%;
+    min-width: 200px;
+    width: 85%;
+    max-width: fit-content;
 }
 li.settings > a{
     color: white;
@@ -417,7 +436,7 @@ li.settings > a{
     nav li:last-child{
         margin-right: 0;
     }
-    .menu-icon{
+    .menu-icon:not(.setts){
         display: inline-block;
         max-width: 50px;
         max-height: 50px;
@@ -425,7 +444,7 @@ li.settings > a{
         border-radius: 2px;
     }
 
-    p.menu{
+    p.menu:not(.setts){
         display: none;
     }
     a.title{
@@ -433,5 +452,8 @@ li.settings > a{
         padding-left: 0;
         margin-left: auto;
         margin-right: auto;
+    }
+    form.inline{
+        display: block;
     }
 }

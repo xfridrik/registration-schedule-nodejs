@@ -1,0 +1,11 @@
+extends ../layout
+block content
+    .settings
+        section.container
+            h2 Prihlásené tímy:
+            if teams.length !== 0
+                dl.list-group.teams
+                    each team in teams
+                        dt.list-group-item=team.name
+            else
+                p Nie sú prihlásené žiadne tímy
