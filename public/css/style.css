@@ -4,7 +4,6 @@ body{
     padding: 0;
     background-color: #eff1f5;
     min-height: 100vh;
-    margin-bottom: 80px;
 }
 header{
     background-color: #2168e1;
@@ -114,9 +113,9 @@ h3{
 }
 
 .edit-button{
-    background-color: #EB8963;
+    background-color: #34d0b1;
     color: #FFF;
-    border-color: #EB8963;
+    border-color: #3ee58f;
 }
 
 input:focus,#register:focus,#login:focus{
@@ -192,7 +191,6 @@ section{
 
 section.container{
     max-width: 660px;
-    background-color: ghostwhite;
 }
 label{
     color: #2168e1;
@@ -219,11 +217,13 @@ dd.list-group-item{
 dd.list-group-item:last-child{
     border-radius: 0 0 0.3rem 0.3rem;
 }
+
 dt.zapas{
     border: solid white ;
     border-bottom: 0;
 }
 dd.zapas{
+    background-color: #e0eeff;
     border: solid white;
     margin-bottom: 0;
     border-bottom: 0;
@@ -372,6 +372,33 @@ li.settings{
     width: 85%;
     max-width: fit-content;
 }
+dt.kolo{
+    cursor: pointer;
+    margin-bottom: 0;
+    border-radius:0.3rem 0.3rem 0.3rem 0.3rem;
+}
+dt.active{
+    background-color: #0088ff !important;
+    border-radius:0.3rem 0.3rem 0 0!important;
+}
+.matches{
+    background-color: #e0eeff;
+    width: 80%;
+    max-width: 450px;
+    min-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px 0.5rem;
+    border-radius: 0 0 0.3rem 0.3rem;
+}
+dt.match-date{
+    background-color: #4A5F82 !important;
+}
+dt.list-group-item:first-of-type{
+    margin-top: 0;
+}
+
+
 li.settings > a{
     color: white;
     text-decoration: none;
@@ -388,6 +415,9 @@ li.settings > a{
     }
     .buttons{
         margin-top: 50px;
+    }
+    body{
+        padding-bottom: 80px;
     }
     nav {
         overflow: hidden;

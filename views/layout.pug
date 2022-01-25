@@ -39,5 +39,6 @@ html(lang="sk")
                                 p.menu Odhlásiť sa
             else
                 a.title(href="/") Team Registration
-        !=messages('message',locals)
-        block content
+        .scroll
+            !=messages('message',locals)
+            block content

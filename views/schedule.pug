@@ -1,29 +1,26 @@
 extends layout
 block content
-
     h3 Rozpis zápasov:
     if leagues.length !== 0
         #select-wrap
             select.form-input(id='league-select')
                 each league, i in leagues
                     option(value=league.id) #{league.name}
-        each league in leagues
+        each league,i in leagues
             dl(id="l"+league.id, class="league")
                 h2 #{league.name}
-                each match,i in matches
-                    if match.league === league.id
-                        if match.round % 2
-                            dt.list-group-item="Kolo "+match.round +" - "+match.date.toDateString()
-                            if(match.home === match.guest)
-                                dd.list-group-item=match.home + " - VOĽNO"
-                            else
-                                dd.list-group-item=match.home + " - " + match.guest
-                        else
-                            dt.list-group-item.second="Kolo "+match.round +" - "+match.date.toDateString()
-                            if(match.home===match.guest)
-                                dd.list-group-item=match.home + " - VOĽNO"
-                            else
-                                dd.list-group-item=match.home + " - " + match.guest
+                each rounds,j in matches[i]
+                    dt.list-group-item.kolo=j+1 + ". kolo"
+                    dd2
+                        .matches
+                            each match in rounds
+                                dt.list-group-item.match-date=match.date.toDateString()
+                                    if(match.home === match.guest)
+                                        dd.list-group-item=match.home + " - VOĽNO"
+                                    else
+                                        dd.list-group-item=match.home + " - " + match.guest
+
+
     else
         p Rozpis zápasov zatiaľ nebol zverejnený.
 
@@ -48,3 +45,34 @@ block content
                 }
             }
             updateSchedule(lid);
+
+
+        script.
+            const matches = document.querySelectorAll("dd2");
+            const rounds = document.querySelectorAll("dt.kolo");
+            hide();
+            rounds.forEach((element) => {
+                element.addEventListener("click",(e)=>{
+                    if(e.path[0].classList.contains("active")){
+                       e.path[0].nextSibling.style.display="none";
+                        removeActive();
+                    }
+                    else{
+                        hide();
+                        removeActive();
+                        e.path[0].classList.add("active");
+                        e.path[0].nextSibling.style.display = "block";
+                    }
+                })
+            })
+
+            function hide() {
+                matches.forEach((element) => {
+                    element.style.display = "none";
+                })
+            }
+            function removeActive() {
+                rounds.forEach((element) => {
+                    element.classList.remove("active");
+                })
+            }

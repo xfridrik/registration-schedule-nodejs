@@ -53,6 +53,10 @@ exports.showSchedule = async (req,res) => {
     let matches;
     let team;
     let leagueID;
+    let i=1;
+    let rounds = [];
+    let pocetZapasov=0;
+    let leaguesRounds=[];
     try {
         if(req.user.team){
             team = await pool.query("SELECT * FROM teams where id=$1;",[req.user.team]);
@@ -62,7 +66,25 @@ exports.showSchedule = async (req,res) => {
             leagueID = null;
         }
         leagues = await pool.query("SELECT * FROM leagues;");
-        matches = await pool.query("SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id order by mat.round, mat.id");
+        //matches = await pool.query("SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id order by mat.round, mat.id");
+        for(let j = 0; j<leagues.rows.length; j++){
+            do{
+                const matches=await pool.query(
+                    "SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id where mat.round=$1 AND mat.league=$2 order by mat.round, mat.id",
+                    [i,leagues.rows[j].id]
+                )
+                if(matches.rows.length>0){
+                    rounds.push(matches.rows);
+                }
+                i++;
+                pocetZapasov=matches.rows.length;
+            }while (pocetZapasov!==0)
+            console.log(rounds);
+            leaguesRounds.push(rounds);
+            rounds = [];
+            i=1;
+        }
+
     }
     catch (error){
         console.log(error);
@@ -70,9 +92,19 @@ exports.showSchedule = async (req,res) => {
         return res.redirect('/');
     }
 
+
+    /*let rounds = []
+    for(let i = 0; i<matches.rows.length; i++){
+        if(!rounds[matches.rows[i].round]){
+            rounds[matches.rows[i].round]=[matches.rows[i]];
+        } else {
+            rounds[matches.rows[i].round].push(matches.rows[i]);
+        }
+    }*/
+    console.log(leaguesRounds)
     res.render('schedule',{
         leagues: leagues.rows,
-        matches: matches.rows,
+        matches: leaguesRounds,
         leagueID: leagueID
     });
 };
