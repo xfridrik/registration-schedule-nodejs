@@ -1,5 +1,6 @@
 const pool= require('../config/db');
 
+// Zobrazenie sutaze pre upravu
 exports.showLeague = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -23,6 +24,7 @@ exports.showLeague = async function(req, res) {
     }
 };
 
+// Zobrazenie zapasov pre administratora
 exports.showLeagueSchedule = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -62,6 +64,7 @@ exports.showLeagueSchedule = async function(req, res) {
     }
 };
 
+// Zobrazenie prihlasenych timov
 exports.showLeagueTeams = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -80,7 +83,7 @@ exports.showLeagueTeams = async function(req, res) {
     }
 };
 
-
+// Uprava udajov sutaze
 exports.updateLeague = async (req,res) => {
     if(!req.body.leagueid || !req.body.leaguename){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -106,6 +109,7 @@ exports.updateLeague = async (req,res) => {
         });
 };
 
+// Pridanie novej sutaze
 exports.addLeague = async (req,res) => {
     if(!req.body.startdatefirst || !req.body.startdatesecond || !req.body.nteams ){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -131,6 +135,10 @@ exports.addLeague = async (req,res) => {
         });
 };
 
+/*****************************************************
+ *   Generovanie rozpisu sutaze
+ *   Referencie: Froncek, Dalibor. (2010). Scheduling a Tournament. Mathematics and Sports. 10.5948/UPO9781614442004.018.
+ ******************************************************/
 exports.leagueGenerateSchedule = async (req,res) => {
     if(!req.body.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
@@ -143,8 +151,8 @@ exports.leagueGenerateSchedule = async (req,res) => {
     let teams;
 
     try {
-        teams=await pool.query("SELECT id, preferred_match FROM teams where league=$1 order by id;",[id]); // select teams in league
-        const dates=await pool.query("SELECT start_date_first, start_date_second FROM leagues where id=$1;",[id]); // get dates and check, if exists
+        teams = await pool.query("SELECT id, preferred_match FROM teams where league=$1 order by id;",[id]); // select teams in league
+        const dates = await pool.query("SELECT start_date_first, start_date_second FROM leagues where id=$1;",[id]); // get dates and check, if exists
         await pool.query('DELETE FROM matches where league=$1;',[id]); // delete old matches
 
         if(dates.rows.length<1){
@@ -168,7 +176,7 @@ exports.leagueGenerateSchedule = async (req,res) => {
     let nmatches;
     // Počet tímov
     let nteams = teams.rows.length;
-    // Vypocitaj pocet zapasov
+    // Vypocita pocet zapasov
     if(nteams%2===0){
         nrounds=nteams-1;
         nmatches=nteams/2;
@@ -178,9 +186,13 @@ exports.leagueGenerateSchedule = async (req,res) => {
         nmatches=(nteams+1)/2;
     }
 
-    const matches = createMatchesTable(nrounds, nmatches, nteams, date, dateSecond)
+    // Vytvori tabulku kol so zapasmi
+    const matches = createMatchesTable(nrounds, nmatches, nteams, date, dateSecond);
+
+    // Zoradi timy podla preferencii
     const orderedTeams = sortTeams(teams.rows, matches);
 
+    // Pridanie zapasov do databazy
     try{
         for(let i=0; i<matches.length; i++){
             for(let j=0; j<matches[i].length; j++){
@@ -242,10 +254,7 @@ const sortTeams = (teams, matches) => {
             }
         }
     }
-    console.log("Zoradene timy")
-    console.log(notOrderedTeams)
-    console.log(orderedTeams)
-    console.log("-------------------------\n Doplnene timy")
+
     // Pridať nepriradené tímy
     for(let i=0; i<notOrderedTeams.length; i++){
         if(notOrderedTeams[i]!==null){
@@ -258,13 +267,13 @@ const sortTeams = (teams, matches) => {
             }
         }
     }
-    console.log(notOrderedTeams)
-    console.log(orderedTeams)
-    console.log("-------------------------")
+
     return orderedTeams;
 }
-
-// Vytvorí rozpis zápasov - bregerovu tabulku
+/*****************************************************
+ *   Vytvorí rozpis zápasov - bregerovu tabulku, Schurigova metoda
+ *   Referencie: Froncek, Dalibor. (2010). Scheduling a Tournament. Mathematics and Sports. 10.5948/UPO9781614442004.018.
+ ******************************************************/
 const createMatchesTable = (nrounds, nmatches, nteams, date, dateSecond) => {
     let table=[];
     let matches=[];

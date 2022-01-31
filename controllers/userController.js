@@ -50,7 +50,6 @@ exports.userRegister = async (req,res) => {
 // Rozpis
 exports.showSchedule = async (req,res) => {
     let leagues;
-    let matches;
     let team;
     let leagueID;
     let i=1;
@@ -66,7 +65,6 @@ exports.showSchedule = async (req,res) => {
             leagueID = null;
         }
         leagues = await pool.query("SELECT * FROM leagues;");
-        //matches = await pool.query("SELECT hteam.name as home, gteam.name as guest, mat.date as date, mat.league as league, mat.id as id, mat.round as round FROM matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id order by mat.round, mat.id");
         for(let j = 0; j<leagues.rows.length; j++){
             do{
                 const matches=await pool.query(
@@ -92,15 +90,6 @@ exports.showSchedule = async (req,res) => {
         return res.redirect('/');
     }
 
-
-    /*let rounds = []
-    for(let i = 0; i<matches.rows.length; i++){
-        if(!rounds[matches.rows[i].round]){
-            rounds[matches.rows[i].round]=[matches.rows[i]];
-        } else {
-            rounds[matches.rows[i].round].push(matches.rows[i]);
-        }
-    }*/
     console.log(leaguesRounds)
     res.render('schedule',{
         leagues: leagues.rows,

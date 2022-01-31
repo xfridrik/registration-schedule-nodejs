@@ -16,6 +16,10 @@ router.get('*',function (req,res,next){
     next();
 });
 
+/*****************************************************
+ *   Passport.js middleware
+ *   Referencies: https://www.passportjs.org/concepts/authentication/middleware/
+ ******************************************************/
 router.post("/login",checkAuth,
     passport.authenticate("local", {
         successRedirect: "/user",

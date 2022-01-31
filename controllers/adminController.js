@@ -5,12 +5,12 @@ const pool= require('../config/db');
 exports.adminRegister = async(req,res) => {
     const email = req.body.email;
     const pass = req.body.heslo;
-    const name= req.body.meno;
+    const name = req.body.meno;
 
     if(!email || !pass || !name) return missingInputData(req, res);
 
-    const encryptedPass = await bcrypt.hash(pass, 10);
     try {
+        const encryptedPass = await bcrypt.hash(pass, 10);
         const users = await pool.query(
             'SELECT * FROM users where email=$1',
             [email]
@@ -33,9 +33,7 @@ exports.adminRegister = async(req,res) => {
                 res.redirect("/login");
             }
         } else {
-            // email already registered
             if (users.rows.length > 0) {
-                console.log("email obsadeny")
                 req.flash("danger", 'Email už je registrovaný!');
             }
             res.redirect("/");
@@ -90,7 +88,7 @@ exports.match = async (req, res) => {
 // Úprava dátumu v zápase
 exports.editMatchDate = async (req,res) => {
     const date = req.body.date;
-    const id=req.body.id;
+    const id = req.body.id;
 
     if(!date || !id) return missingInputData(req, res);
 
@@ -200,7 +198,7 @@ exports.adminAddTeam = async (req,res) => {
     }
 };
 
-
+// Konvertuje date na string pouzitelny v html elementoch
 const dateToStringHTML = (date)=>{
     let dateString =  date.getFullYear().toString() + '-'
     if(date.getMonth()+1<10){
