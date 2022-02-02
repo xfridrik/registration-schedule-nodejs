@@ -13,3 +13,13 @@ block content
 
             input.button.submit-button(type='submit' value='Upraviť')
             input.button.reset-button(type='reset' value='Reset')
+
+        form.container(method='POST', action='/removeleague', onsubmit="return validate(this);")
+            p Vymaže súťaž, rozpis zápasov a tímy prihlásené v súťaži.
+            input(name='leagueid', value='' + league.id type='hidden' required)
+            input.button.remove-button(type='submit' value='VYMAZAŤ SÚŤAŽ')
+
+    script.
+        function validate(form) {
+            return confirm('Naozaj chceš vymazať súťaž?');
+        }

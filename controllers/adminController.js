@@ -64,7 +64,7 @@ exports.match = async (req, res) => {
 
     try{
         const match = await pool.query(
-            "SELECT hteam.name as home, gteam.name as guest, mat.date as date from matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id where mat.id = $1",
+            "SELECT hteam.id as hid, gteam.id as gid, hteam.name as home, gteam.name as guest, mat.date as date from matches mat join teams hteam on mat.home=hteam.id join teams gteam on mat.guest=gteam.id where mat.id = $1",
             [id]
         );
         if(match.rows.length < 1){
@@ -75,6 +75,8 @@ exports.match = async (req, res) => {
         res.render("admin/match",{
             hometeam:match.rows[0].home,
             guestteam:match.rows[0].guest,
+            hid:match.rows[0].hid,
+            gid:match.rows[0].gid,
             date:dateString,
             id:id
         });
@@ -123,7 +125,7 @@ exports.swapMatchTeams = async (req,res) => {
                             return res.redirect("/settings");
                         }else {
                             req.flash("success",'Domáci tím úspešne zmenený!');
-                            res.redirect("/settings")
+                            res.redirect("/leagueschedule?leagueid="+result.rows[0].league);
                         }
                     }
                 );
@@ -197,6 +199,37 @@ exports.adminAddTeam = async (req,res) => {
             });
     }
 };
+
+exports.AdminViewTeam = async (req,res) => {
+    if(!req.query.teamid) return missingInputData(req, res);
+
+    pool.query("SELECT * FROM teams where id = $1",[req.query.teamid],(err,result)=>{
+        if(err){
+            req.flash("danger", 'Nepodarilo sa zobraziť tím!');
+            res.redirect("/settings");
+        }
+        else {
+            if(result.rows.length>0){
+                pool.query('SELECT * FROM leagues',(err,result2)=>{
+                    if(err){
+                        req.flash("danger", 'Nastala chyba!');
+                        res.redirect("/user");
+                    }else{
+                        res.render("team",{
+                            team:result.rows[0],
+                            leagues:result2.rows
+                        });
+                    }
+                });
+            }
+            else{
+                req.flash("danger", 'Nepodarilo sa nájsť tím!');
+                res.redirect("/settings");
+            }
+        }
+    });
+};
+
 
 // Konvertuje date na string pouzitelny v html elementoch
 const dateToStringHTML = (date)=>{

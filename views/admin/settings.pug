@@ -23,7 +23,7 @@ block content
                     dd.list-group-item.options
                         form.options.inline(method='GET', action="/league")
                             input(name='leagueid', value='' + league.id type='hidden' required)
-                            input.button.submit-button(type='submit' value='Spravovať')
+                            input.button.edit-button(type='submit' value='Spravovať')
                         form.options.inline(method='GET', action="/leagueteams")
                             input(name='leagueid', value='' + league.id type='hidden' required)
                             input.button.submit-button(type='submit' value='Tímy')

@@ -7,5 +7,9 @@ block content
                 dl.list-group.teams
                     each team in teams
                         dt.list-group-item=team.name
+                        dd.list-group-item.options
+                            form.options.inline(method='GET', action="/showteam")
+                                input(name='teamid', value='' + team.id type='hidden' required)
+                                input.button.submit-button(type='submit' value='Upraviť')
             else
                 p Nie sú prihlásené žiadne tímy

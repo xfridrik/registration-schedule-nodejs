@@ -49,10 +49,11 @@ exports.showLeagueSchedule = async function(req, res) {
                                     req.flash("danger", "Nepodarilo sa nájsť zápasy!");
                                     res.status(401).redirect("/settings");
                                 }else{
+                                    const rounds = matchesToRounds(result3.rows);
                                     res.render("admin/leagueschedule", {
                                         league: result.rows[0],
                                         teams: result2.rows,
-                                        matches: result3.rows
+                                        rounds: rounds
                                     })
                                 }
                             })
@@ -63,6 +64,20 @@ exports.showLeagueSchedule = async function(req, res) {
         });
     }
 };
+
+// Converts sorted array by rounds of matches into round arrays, round start index = 1
+const matchesToRounds = (matches) =>{
+    const rounds = [];
+    for(let i=0;i<matches[matches.length-1].round;i++){
+       rounds.push([]);
+       for(let j=0;j<matches.length;j++){
+           if(matches[j].round === i+1){
+               rounds[i].push(matches[j]);
+           }
+       }
+    }
+    return rounds;
+}
 
 // Zobrazenie prihlasenych timov
 exports.showLeagueTeams = async function(req, res) {
@@ -230,6 +245,40 @@ exports.leagueRemoveSchedule = async (req, res) => {
         }
     })
 };
+
+exports.leagueRemove = async (req, res) => {
+    const id = req.body.leagueid; // ID ligy
+    if(!id){
+        req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
+        return res.status(401).redirect("/settings");
+    }
+    // Delete matches
+    await pool.query("DELETE FROM matches where league = $1",[id],(err)=>{
+        if(err){
+            req.flash("danger","Nepodarilo sa odstrániť zápasy!");
+            return res.redirect("/settings");
+        }
+    })
+    // Delete teams
+    await pool.query("DELETE FROM teams where league = $1",[id],(err)=>{
+        if(err){
+            req.flash("danger","Nepodarilo sa odstrániť tímy!");
+            return res.redirect("/settings");
+        }
+    })
+    // Delete league
+    await pool.query("DELETE FROM leagues where id = $1",[id],(err)=>{
+        if(err){
+            req.flash("danger","Nepodarilo sa odstrániť súťaž!");
+            return res.redirect("/settings");
+        }
+    })
+    req.flash("success","Súťaž a jej tímy boli odstránené!");
+    return res.redirect('/settings');
+
+};
+
+
 
 // Zoradí tímy tak, aby vysiel domaci zapas na ich preferovany zapas ak je to mozne,
 // ostatne timy zoradi postupne do zostavajucich volnych miest

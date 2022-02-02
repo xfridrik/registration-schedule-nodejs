@@ -14,20 +14,24 @@ block content
             else
                 p Nie sú prihlásené žiadne tímy
 
-        if matches.length > 0
+        if rounds.length > 0
             section.container
                 h2 Rozpis zápasov
                 dl(id="l" + league.id, class="league")
-                    each match,i in matches
-                        dt.list-group-item.zapas="Kolo " + match.round + " - " + match.date.toDateString()
-                            if(match.home === match.guest)
-                                dd.list-group-item.zapas=match.home + " - VOĽNO"
-                            else
-                                dd.list-group-item.zapas=match.home + " - " + match.guest
-                            dd.list-group-item.zapas.edit-end
-                                form.edit(method='GET', action="/match")
-                                    input.form-control(name='matchid', value=match.id type='hidden' required)
-                                    input.button.edit-button(type='submit' value='Upraviť zápas')
+                    each round,j in rounds
+                        dt.list-group-item.kolo=j + 1 + ". kolo"
+                        dd2
+                            .matches
+                                each match in round
+                                    dt.list-group-item.match-date=match.date.toDateString()
+                                        if(match.home === match.guest)
+                                            dd.list-group-item.zapas.volno=match.home + " - VOĽNO"
+                                        else
+                                            dd.list-group-item.zapas=match.home + " - " + match.guest
+                                        dd.list-group-item.zapas.edit-end
+                                            form.edit(method='GET', action="/match")
+                                                input.form-control(name='matchid', value=match.id type='hidden' required)
+                                                input.button.submit-button(type='submit' value='Upraviť zápas')
 
     script.
         function validateRemove(form) {
@@ -35,4 +39,33 @@ block content
         }
         function validateGenerate(form) {
             return confirm('Týmto sa odstránia všetky zápasy v súťaži a vygenerujú sa nové');
+        }
+
+    script.
+        const matches = document.querySelectorAll("dd2");
+        const rounds = document.querySelectorAll("dt.kolo");
+        hide();
+        rounds.forEach((element) => {
+            element.addEventListener("click", (e) => {
+                if (e.path[0].classList.contains("active")) {
+                    e.path[0].nextSibling.style.display = "none";
+                    removeActive();
+                } else {
+                    hide();
+                    removeActive();
+                    e.path[0].classList.add("active");
+                    e.path[0].nextSibling.style.display = "block";
+                }
+            })
+        })
+
+        function hide() {
+            matches.forEach((element) => {
+                element.style.display = "none";
+            })
+        }
+        function removeActive() {
+            rounds.forEach((element) => {
+                element.classList.remove("active");
+            })
         }

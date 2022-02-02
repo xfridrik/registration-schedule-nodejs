@@ -223,20 +223,23 @@ dt.zapas{
     border-bottom: 0;
 }
 dd.zapas{
-    background-color: #e0eeff;
-    border: solid white;
     margin-bottom: 0;
     border-bottom: 0;
 }
 dd.zapas.edit-end{
-    border: solid white;
     border-radius: 0 0 0.3rem 0.3rem;
-    border-top: 0;
 }
 dt.second{
     background-color: #4A5F82;
 }
 
+dd.volno{
+   color: #5996d7!important;
+}
+
+h3.match-name, h4{
+    color: #004a99;
+}
 .list-group-item{
     margin: 0 auto;
     text-align: center;
@@ -397,7 +400,6 @@ dt.match-date{
 dt.list-group-item:first-of-type{
     margin-top: 0;
 }
-
 
 li.settings > a{
     color: white;

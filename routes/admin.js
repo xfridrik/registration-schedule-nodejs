@@ -45,6 +45,8 @@ router.post('/generateschedule', checkNotAuthAdmin, leagueController.leagueGener
 
 router.post('/removeschedule', checkNotAuthAdmin, leagueController.leagueRemoveSchedule);
 
+router.post('/removeleague', checkNotAuthAdmin, leagueController.leagueRemove);
+
 router.get("/match", checkNotAuthAdmin, adminController.match);
 
 router.post("/match/swap", checkNotAuthAdmin, adminController.swapMatchTeams);
@@ -54,6 +56,8 @@ router.post("/match/update", checkNotAuthAdmin, adminController.editMatchDate);
 router.get('/addteam',checkNotAuthAdmin, adminController.teamRegistration);
 
 router.post('/addteam', checkNotAuthAdmin, adminController.adminAddTeam);
+
+router.get('/showteam',checkNotAuthAdmin, adminController.AdminViewTeam);
 
 router.get('/addadmin',checkNotAuthAdmin, ((req, res) => {
     res.render('admin/addadmin');

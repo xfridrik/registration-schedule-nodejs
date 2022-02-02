@@ -2,7 +2,10 @@ extends ../layout
 block content
     .container.settings
         h2 Úprava zápasu
-        h3  #{hometeam} - #{guestteam}
+        if(hid === gid)
+            h3.match-name  #{hometeam} - VOĽNO
+        else
+            h3.match-name  #{hometeam} - #{guestteam}
         form(method='POST', action="/match/update")
             label Dátum zápasu:
                 input.form-input(name='date', value=date type='date' required)
@@ -11,6 +14,7 @@ block content
         br
         form(method='POST', action="/match/swap")
             label Domáci tím:
+                h4 #{hometeam}
                 input.form-control(name='id', value=id type='hidden' required)
             input.button.edit-button(type='submit' value='Vymeniť')
 
