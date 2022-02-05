@@ -1,0 +1,74 @@
+extends ../layout
+block content
+    if team
+        form.container(method='POST', action="/admin-update")
+            h2 Tím #{team.name}
+            input.form-input(name='teamid', value='' + team.id type='hidden' required)
+            label Názov tímu:
+                input.form-input(name='nazov', value='' + team.name type='text' required)
+            label Preferovaný domáci zápas*:
+                select.form-input(id='pref-match-edit', name='prefmatch', required)
+
+            input.button.submit-button(type='submit' value='Upraviť')
+            input.button.reset-button(type='reset' value='Resetovať')
+            p *Po zverejnení rozpisu zmena domáceho zápasu nemá efekt
+
+        form(method='POST', action="/admin-remove-team", onsubmit="return validate(this);")
+            input.form-input(name='teamid', value='' + team.id type='hidden' required)
+            input.button.remove-button(type='submit' value='ZMAZAŤ REGISTRÁCIU')
+
+    if leagues.length !== 0
+        script.
+            const leagues = !{JSON.stringify(leagues)};
+            const prefEdit = document.getElementById("pref-match-edit");
+            const team = !{JSON.stringify(team)};
+            let nteams;
+            let date;
+            let dateSecond;
+
+            for (let l in leagues) {
+                if (leagues.hasOwnProperty(l)) {
+                    if (leagues[l].id === team.league) {
+                        nteams = leagues[l].nteams;
+                        date = new Date(leagues[l].start_date_first);
+                        dateSecond = new Date(leagues[l].start_date_second);
+                    }
+                }
+            }
+
+            let laps = 0;
+            if (nteams % 2) {
+                laps = nteams - 1;
+            } else {
+                laps = nteams;
+            }
+            for (let i = 0; i < laps; i++) {
+                var opt = document.createElement("option");
+                opt.setAttribute("value", i.toString());
+                if (team.preferred_match === i) {
+                    opt.setAttribute("selected", "selected");
+                }
+                if (i === 0) {
+                    opt.innerText = "Nedefinovaný";
+                } else {
+                    opt.innerText = date.toDateString()
+                    date.setDate(date.getDate() + 7);
+                }
+                prefEdit.append(opt)
+            }
+            for (let i = laps; i < 2 * laps - 1; i++) {
+                var opt = document.createElement("option");
+                opt.setAttribute("value", i.toString());
+                opt.innerText = dateSecond.toDateString()
+                if(team.preferred_match === i){
+                    opt.setAttribute("selected", "selected");
+                }
+                dateSecond.setDate(dateSecond.getDate() + 7);
+                prefEdit.append(opt)
+            }
+            document.getElementById("pref-match-edit");
+
+    script.
+        function validate(form) {
+            return confirm('Naozaj chceš vymazať záznam? Týmto vymažeš tím z účtu užívateľa a z tejto súťaže.');
+        }

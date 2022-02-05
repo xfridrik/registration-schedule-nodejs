@@ -85,7 +85,7 @@ exports.showLeagueTeams = async function(req, res) {
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
         res.status(401).redirect("/settings");
     }else {
-        pool.query("SELECT * FROM teams where league = $1",[req.query.leagueid],(err,result)=>{
+        pool.query("SELECT * FROM teams where league = $1 order by id",[req.query.leagueid],(err,result)=>{
             if(err){
                 req.flash("danger", "Nepodarilo sa nájsť prihlásené tímy!");
                 res.status(401).redirect("/settings");

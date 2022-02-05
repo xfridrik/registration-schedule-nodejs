@@ -229,16 +229,15 @@ exports.userUpdateTeam = async (req,res) => {
     }
     const name = req.body.nazov;
     const preferred_match = req.body.prefmatch || 0;
-    //Ak nastala zmena názvu, skontroluje, či už taký tím neexistuje
-    if(name!==req.body.pred){
-        const sqlCheck="SELECT * from teams where name = $1";
-        const todo=await pool.query(sqlCheck,[name]);
-        if(todo.rows.length>0){
-            req.flash("danger",'Tím s rovnakým názvom už existuje!');
-            res.redirect("/team")
-            return;
-        }
+    // Skontroluje, či už taký tím neexistuje
+    const sqlCheck="SELECT * from teams where name = $1 and id != $2";
+    const todo=await pool.query(sqlCheck,[name,req.user.team]);
+    if(todo.rows.length>0){
+        req.flash("danger",'Tím s rovnakým názvom už existuje!');
+        res.redirect("/team")
+        return;
     }
+
     const sql = "UPDATE teams SET name=$1, preferred_match=$2 where id = $3";
     pool.query(
         sql,[name,preferred_match,req.user.team],
@@ -247,10 +246,11 @@ exports.userUpdateTeam = async (req,res) => {
             if(err){
                 req.flash("danger",'Nastala chyba!');
                 res.redirect("/");
+            }else {
+                req.flash("success",'Údaje boli úspešne zmenené!');
+                res.redirect("/team");
             }
         });
-    req.flash("success",'Údaje boli úspešne zmenené!');
-    res.redirect("/team");
 };
 
 // Odstrániť tím

@@ -59,6 +59,11 @@ router.post('/addteam', checkNotAuthAdmin, adminController.adminAddTeam);
 
 router.get('/showteam',checkNotAuthAdmin, adminController.AdminViewTeam);
 
+router.post('/admin-update', checkNotAuthAdmin, adminController.adminUpdateTeam);
+
+router.post('/admin-remove-team', checkNotAuthAdmin, adminController.adminRemoveTeam);
+
+
 router.get('/addadmin',checkNotAuthAdmin, ((req, res) => {
     res.render('admin/addadmin');
 }));

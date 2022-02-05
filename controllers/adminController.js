@@ -215,7 +215,7 @@ exports.AdminViewTeam = async (req,res) => {
                         req.flash("danger", 'Nastala chyba!');
                         res.redirect("/user");
                     }else{
-                        res.render("team",{
+                        res.render("admin/leagueteam",{
                             team:result.rows[0],
                             leagues:result2.rows
                         });
@@ -230,6 +230,59 @@ exports.AdminViewTeam = async (req,res) => {
     });
 };
 
+// Upraviť prihlásený tím
+exports.adminUpdateTeam = async (req,res) => {
+    if(!(req.body.nazov) || !(req.body.teamid)) return missingInputData(req, res);
+
+    const name = req.body.nazov;
+    const preferred_match = req.body.prefmatch || 0;
+    // či už taký tím neexistuje
+    const sqlCheck="SELECT * from teams where name = $1 and id != $2";
+    const todo=await pool.query(sqlCheck,[name,req.body.teamid]);
+    if(todo.rows.length>0){
+        req.flash("danger",'Tím s rovnakým názvom už existuje!');
+        res.redirect("/settings");
+        return;
+    }
+
+    const sql = "UPDATE teams SET name=$1, preferred_match=$2 where id = $3";
+    pool.query(
+        sql,[name,preferred_match,req.body.teamid],
+        (err) => {
+            console.log(err);
+            if(err){
+                req.flash("danger",'Nastala chyba!');
+                res.redirect("/");
+            }else {
+                req.flash("success",'Údaje boli úspešne zmenené!');
+                res.redirect("/showteam?teamid="+req.body.teamid);
+            }
+        });
+};
+// Odstrániť prihlásený tím
+exports.adminRemoveTeam = (req, res) => {
+    if(!(req.body.teamid)) return missingInputData(req, res);
+    pool.query("UPDATE users SET team=$1 where team = $2;", [null, req.body.teamid], (err) => {
+        if (err) {
+            req.flash("danger", 'Nepodarilo sa odstrániť tím!');
+            res.redirect("/settings");
+
+        } else {
+            pool.query("DELETE FROM teams where id = $1", [req.body.teamid], (err) => {
+                if (err) {
+                    console.log(err)
+                    req.flash("danger", 'Nepodarilo sa vymazať záznam!');
+                    res.redirect("/settings");
+
+                } else {
+                    req.flash("success", 'Tím bol odstránený z databázy!');
+                    res.redirect("/settings");
+                }
+            })
+        }
+
+    })
+};
 
 // Konvertuje date na string pouzitelny v html elementoch
 const dateToStringHTML = (date)=>{
