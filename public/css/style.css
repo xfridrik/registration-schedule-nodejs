@@ -237,8 +237,12 @@ dd.volno{
    color: #5996d7!important;
 }
 
-h3.match-name, h4{
+h3.match-name, h3.team-name, h4{
     color: #004a99;
+}
+
+h3.team-name{
+    margin-top: 0;
 }
 .list-group-item{
     margin: 0 auto;

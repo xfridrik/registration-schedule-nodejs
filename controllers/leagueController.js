@@ -4,7 +4,7 @@ const pool= require('../config/db');
 exports.showLeague = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        res.status(401).redirect("/settings");
+        return res.status(401).redirect("/settings");
     }else {
         pool.query("SELECT * FROM leagues where id = $1",[req.query.leagueid],(err,result)=>{
             if(err){
@@ -28,7 +28,7 @@ exports.showLeague = async function(req, res) {
 exports.showLeagueSchedule = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        res.status(401).redirect("/settings");
+        return res.status(401).redirect("/settings");
     }else {
         pool.query("SELECT * FROM leagues where id = $1",[req.query.leagueid],(err,result)=>{
             if(err){
@@ -88,7 +88,7 @@ const matchesToRounds = (matches) =>{
 exports.showLeagueTeams = async function(req, res) {
     if(!req.query.leagueid){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        res.status(401).redirect("/settings");
+        return res.status(401).redirect("/settings");
     }else {
         pool.query("SELECT * FROM teams where league = $1 order by id",[req.query.leagueid],(err,result)=>{
             if(err){
@@ -107,7 +107,7 @@ exports.showLeagueTeams = async function(req, res) {
 exports.updateLeague = async (req,res) => {
     if(!req.body.leagueid || !req.body.leaguename){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        res.status(401).redirect("/settings");
+        return res.status(401).redirect("/settings");
     }
     let open = false;
     if(req.body.leagueopen){
@@ -131,22 +131,32 @@ exports.updateLeague = async (req,res) => {
 
 // Pridanie novej sutaze
 exports.addLeague = async (req,res) => {
-    if(!req.body.startdatefirst || !req.body.startdatesecond || !req.body.nteams ){
+    if(!req.body.startdatefirst || !req.body.startdatesecond || !req.body.nteams || !req.body.leaguename ){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        res.status(401).redirect("/settings");
+        return res.status(401).redirect("/settings");
+    }
+    if(req.body.nteams<2){
+        req.flash("danger", "Súťaž musí byť aspoň pre 2 tímy!");
+        return res.redirect("/addleague");
     }
     let open = false;
     if(req.body.leagueopen){
         open = true;
     }
+
     const sql="INSERT INTO leagues (name, start_date_first, start_date_second, nteams, opened) VALUES ($1,$2,$3,$4,$5);";
     pool.query(
         sql,[req.body.leaguename,req.body.startdatefirst, req.body.startdatesecond, req.body.nteams, open],
         (err) => {
             console.log(err);
             if(err){
-                req.flash("danger",'Nastala chyba!');
-                res.redirect("/");
+                if(err.code === '23505'){
+                    req.flash("danger",'Súťaž s rovnakým údajom už existuje!');
+                }
+                else {
+                    req.flash("danger",'Nastala chyba!');
+                }
+                return res.redirect("/");
             }
             else{
                 req.flash("success",'Súťaž bola pridaná!');

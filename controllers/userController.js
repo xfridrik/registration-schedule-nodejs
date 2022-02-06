@@ -35,7 +35,6 @@ exports.userRegister = async (req,res) => {
         } else {
             // email already registered
             if (users.rows.length > 0) {
-                console.log("email obsadeny")
                 req.flash("danger", 'Email už je registrovaný!');
             }
             res.render("register");
@@ -77,7 +76,6 @@ exports.showSchedule = async (req,res) => {
                 i++;
                 pocetZapasov=matches.rows.length;
             }while (pocetZapasov!==0)
-            console.log(rounds);
             leaguesRounds.push(rounds);
             rounds = [];
             i=1;
@@ -90,7 +88,6 @@ exports.showSchedule = async (req,res) => {
         return res.redirect('/');
     }
 
-    console.log(leaguesRounds)
     res.render('schedule',{
         leagues: leagues.rows,
         matches: leaguesRounds,
@@ -102,7 +99,6 @@ exports.showSchedule = async (req,res) => {
 exports.userHome =  async (req,res) => {
     try{
         const leagues = await pool.query('SELECT * FROM leagues');
-        console.log(leagues)
         res.render('user',{
             name:req.user.name,
             leagues:leagues.rows
@@ -146,7 +142,6 @@ exports.userTeam = async (req,res) => {
     else{
         try{
             const leagues = await pool.query('SELECT * FROM leagues');
-            console.log(leagues)
             res.render('team',{
                 team:req.user.team,
                 leagues:leagues.rows,
@@ -199,8 +194,8 @@ exports.userAddTeam = async (req,res) => {
             pool.query(
                 sql, [name, preferred_match, league],
                 (err, result) => {
-                    console.log(err, result);
                     if(err){
+                        console.log(err);
                         req.flash("danger", 'Nepodarilo sa registrovať tím!');
                         res.redirect("/team");
 

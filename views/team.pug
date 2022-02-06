@@ -2,10 +2,10 @@ extends layout
 block content
     if team
         form.container(method='POST', action="/update")
-            h2 Registrovaný tím:
-            label Pôvodný názov tímu:
-                input.form-input(name='pred', value='' + team.name type='text' readonly)
-            label Nový názov tímu:
+            h2.inline Registrovaný tím -&nbsp;
+            h3.team-name.inline #{team.name}
+            br
+            label Názov tímu:
                 input.form-input(name='nazov', value='' + team.name type='text' required)
 
             label Preferovaný domáci zápas*:
