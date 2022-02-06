@@ -68,15 +68,20 @@ exports.showLeagueSchedule = async function(req, res) {
 // Converts sorted array by rounds of matches into round arrays, round start index = 1
 const matchesToRounds = (matches) =>{
     const rounds = [];
-    for(let i=0;i<matches[matches.length-1].round;i++){
-       rounds.push([]);
-       for(let j=0;j<matches.length;j++){
-           if(matches[j].round === i+1){
-               rounds[i].push(matches[j]);
-           }
-       }
+    if(matches.length<1){
+        return rounds;
     }
-    return rounds;
+    else {
+        for(let i=0;i<matches[matches.length-1].round;i++){
+            rounds.push([]);
+            for(let j=0;j<matches.length;j++){
+                if(matches[j].round === i+1){
+                    rounds[i].push(matches[j]);
+                }
+            }
+        }
+        return rounds;
+    }
 }
 
 // Zobrazenie prihlasenych timov
