@@ -218,7 +218,6 @@ exports.leagueGenerateSchedule = async (req,res) => {
 
     // Vytvori tabulku kol so zapasmi
     const matches = createMatchesTable(nrounds, nmatches, nteams, date, dateSecond);
-
     // Zoradi timy podla preferencii
     const orderedTeams = sortTeams(teams.rows, matches);
 
