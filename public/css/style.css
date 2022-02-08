@@ -415,9 +415,37 @@ li.settings > a{
     align-items: center;
 }
 
+.info-box::before{
+    content: "";
+    display: block;
+    background: url("../img/info.svg");
+    background-size: 50px 50px;
+    width: 50px;
+    height: 50px;
+    float: left;
+    margin-right: 5px
+}
+.info-box, .info-box-small{
+    border: solid 1px #004a99;
+    border-radius: 0.4rem;
+    text-align: justify;
+    padding: 8px;
+    color: #004a99;
+}
+.info-box-small::before{
+    content: "";
+    display: block;
+    background: url("../img/info.svg");
+    background-size: 22px 22px;
+    width: 22px;
+    height: 22px;
+    float: left;
+}
+
 body #menu-space{
     height: 0;
 }
+
 
 @media only screen and (max-width: 520px) {
     #main-page {

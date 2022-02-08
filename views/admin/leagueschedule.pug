@@ -11,6 +11,7 @@ block content
                 form.inline(method='POST', action='/removeschedule', onsubmit="return validateRemove(this);")
                     input(name='leagueid', value='' + league.id type='hidden' required)
                     input.button.remove-button(type='submit' value='Zmazať zápasy')
+                p.info-box Vygenereje rozpis zápasov pre aktuálne prihlásené tímy. Pri prihlásení nových tímov je potrebné vygenerovať nový rozpis. Rozpis je generovaný pomocou Bergerových tabuliek a preferencií tímov, pričom štruktúra tabuľky je vždy zachovaná, takže preferencie týmov nemusia byť vždy dodržané na 100%. Administrátor však dokáže zápasy upraviť aj manuálne po vygenerovaní.
             else
                 p Nie sú prihlásené žiadne tímy - rozpis sa nedá generovať
 
