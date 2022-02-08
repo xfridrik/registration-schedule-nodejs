@@ -297,17 +297,17 @@ exports.leagueRemove = async (req, res) => {
 // Zoradí tímy tak, aby vysiel domaci zapas na ich preferovany zapas ak je to mozne,
 // ostatne timy zoradi postupne do zostavajucich volnych miest
 const sortTeams = (teams, matches) => {
-    const notOrderedTeams=teams.slice();
-    const orderedTeams=[];
+    const notOrderedTeams=teams.slice(); // Pole nezoradenych timov
+    const orderedTeams=[]; // Pole zoradenych timov, index+1 je cislo timu z vygenerovanej tabulky zapasov
     for (let i = 0; i < notOrderedTeams.length; i++) orderedTeams[i] = null;
 
     for(let i=0; i<notOrderedTeams.length; i++){
-        for(let j=0; j<matches.length; j++){
+        for(let j=0; j<matches.length; j++){ // Pocet kol
             // Preferovaný zápas v danom kole - najdi volny domaci tím
             if(j+1 === notOrderedTeams[i].preferred_match){
                 for(let k=0; k<matches[j].length; k++){
-                    // Ak je nájdené volné miesto - priradí ho do ordered a vymaže z notOrdered
-                    if(orderedTeams[(matches[j][k].hometeam)-1]===null){
+                    // Ak je nájdené volné miesto (a nema volno) - priradí ho do ordered a vymaže z notOrdered
+                    if(orderedTeams[(matches[j][k].hometeam)-1]===null && matches[j][k].hometeam !== matches[j][k].guestteam){
                         orderedTeams[(matches[j][k].hometeam)-1]=notOrderedTeams[i];
                         notOrderedTeams[i]=null;
                         break;
