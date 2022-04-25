@@ -1,12 +1,12 @@
 {
-    "theme_color": "#3e7be5",
-    "background_color": "#2168e1",
+    "theme_color": "#2168e1",
+    "background_color": "#eff1f5",
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
     "name": "Team Registration",
-    "description": "Team Registration",
-    "short_name": "Team Registration",
+    "description": "Registration and schedule system for football teams",
+    "short_name": "TR",
     "icons": [
         {
             "src": "/img/icon-192x192.png",

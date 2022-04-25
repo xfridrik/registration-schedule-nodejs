@@ -341,7 +341,7 @@ const createMatchesTable = (nrounds, nmatches, nteams, date, dateSecond) => {
     let table=[];
     let matches=[];
 
-    // Vytvorí 2D tabuľku s účastníkmi (Schurigova metoda) - domáce tímy
+    // Vytvori 2D tabulku s ucastnikmi (Schurigova metoda) (iba domace timy)
     let count = 0;
     for (let i = 0; i < nrounds; i++) {
         table.push([]);
@@ -350,18 +350,17 @@ const createMatchesTable = (nrounds, nmatches, nteams, date, dateSecond) => {
             count++;
         }
     }
-
-    // Spáruje tímy do zápasov
+    // Sparuje timy do zapasov
     for (let i = 0; i < nrounds; i++) {
         matches.push([]);
         for (let j = 0; j < nmatches; j++) {
-            // Prvý zápas v kole
+            // Prvy zapas v kole
             if (j === 0) {
-                // Ak je neparny pocet timov maju pauzu
+                // Neparny pocet timov - pauza
                 if (nteams % 2 !== 0) {
                     matches[i].push({
                         hometeam: table[i][j],
-                        guestteam: table[i][j],//null,
+                        guestteam: table[i][j],
                         round: i+1,
                         date: new Date(date)
                     });
