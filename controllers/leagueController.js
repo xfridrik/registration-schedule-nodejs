@@ -264,32 +264,33 @@ exports.leagueRemove = async (req, res) => {
     const id = req.body.leagueid; // ID ligy
     if(!id){
         req.flash("danger", "Operácia neúspešná! neboli zadané potrebné údaje!");
-        return res.status(401).redirect("/settings");
+        return res.status(400).redirect("/settings");
     }
     // Delete matches
     await pool.query("DELETE FROM matches where league = $1",[id],(err)=>{
         if(err){
             req.flash("danger","Nepodarilo sa odstrániť zápasy!");
-            return res.redirect("/settings");
+            return res.redirect('/settings');
+        }else {
+            // Delete teams
+            pool.query("DELETE FROM teams where league = $1",[id],(err)=>{
+                if(err){
+                    req.flash("danger","Nepodarilo sa odstrániť tímy!");
+                    return res.redirect('/settings');
+                }else {
+                    // Delete league
+                    pool.query("DELETE FROM leagues where id = $1",[id],(err)=>{
+                        if(err){
+                            req.flash("danger","Nepodarilo sa odstrániť súťaž!");
+                        }else {
+                            req.flash("success","Súťaž a jej tímy boli odstránené!");
+                        }
+                        return res.redirect('/settings');
+                    })
+                }
+            })
         }
     })
-    // Delete teams
-    await pool.query("DELETE FROM teams where league = $1",[id],(err)=>{
-        if(err){
-            req.flash("danger","Nepodarilo sa odstrániť tímy!");
-            return res.redirect("/settings");
-        }
-    })
-    // Delete league
-    await pool.query("DELETE FROM leagues where id = $1",[id],(err)=>{
-        if(err){
-            req.flash("danger","Nepodarilo sa odstrániť súťaž!");
-            return res.redirect("/settings");
-        }
-    })
-    req.flash("success","Súťaž a jej tímy boli odstránené!");
-    return res.redirect('/settings');
-
 };
 
 

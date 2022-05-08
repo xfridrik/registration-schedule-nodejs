@@ -80,7 +80,6 @@ exports.showSchedule = async (req,res) => {
             rounds = [];
             i=1;
         }
-
     }
     catch (error){
         console.log(error);
