@@ -15,7 +15,6 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
 
 //Session middleware
-
 const session=require('express-session');
 app.use(session({
     secret: 'red cat 123',
@@ -30,7 +29,6 @@ app.use(function (req,res,next){
     res.locals.messages = require('express-messages')(req,res);
     next();
 });
-
 
 
 app.use('/',users);

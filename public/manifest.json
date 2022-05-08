@@ -4,9 +4,9 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "Team Registration",
+    "name": "Team Registration and Schedule",
     "description": "Registration and schedule system for football teams",
-    "short_name": "TR",
+    "short_name": "Team Registration",
     "icons": [
         {
             "src": "/img/icon-192x192.png",
